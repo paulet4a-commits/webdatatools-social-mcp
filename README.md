@@ -1,0 +1,64 @@
+# WebDataTools Search, video & social data MCP server
+`webdatatools-social-mcp`
+
+An MCP server with 10 search, video & social data tools for AI agents — Claude Desktop, Cursor, Cline or any MCP client. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.
+
+**This server uses *your own* Apify API token.** Every tool call runs a [WebDataTools](https://apify.com/webdatatools) Actor under your Apify account and is billed to your Apify credit — pay per result, the price is in each tool description. Your token is only sent to Apify's API.
+
+## Quick start
+
+Requires Node.js 18+.
+
+```bash
+APIFY_TOKEN=apify_api_... npx -y github:paulet4a-commits/webdatatools-social-mcp
+```
+
+Get a free token (the free plan includes monthly credit): https://console.apify.com/settings/integrations
+
+## Claude Desktop / Cursor
+
+Add this to `claude_desktop_config.json` (Claude Desktop) or `.cursor/mcp.json` (Cursor):
+
+```json
+{
+  "mcpServers": {
+    "webdatatools-social": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "github:paulet4a-commits/webdatatools-social-mcp"
+      ],
+      "env": {
+        "APIFY_TOKEN": "apify_api_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+      }
+    }
+  }
+}
+```
+
+## Tools (10)
+
+| Tool | What it does | Price (free plan) | Backing Actor |
+|---|---|---|---|
+| `google_search_scraper` | Google Search Results Scraper — SERP API | $0.005 / result | [Actor](https://apify.com/webdatatools/google-search-scraper) |
+| `youtube_comments_scraper` | YouTube Comments Scraper — Comments & Replies | $0.0005 / result | [Actor](https://apify.com/webdatatools/youtube-comments-scraper) |
+| `youtube_channel_videos` | YouTube Channel Latest Videos (RSS, no API key) | $0.001 / result | [Actor](https://apify.com/webdatatools/youtube-channel-videos) |
+| `youtube_channel_scraper` | YouTube Channel Scraper (videos, shorts, live) | $0.0005 / video | [Actor](https://apify.com/webdatatools/youtube-channel-scraper) |
+| `youtube_search_scraper` | YouTube Search Results Scraper (videos, channels, no API key) | $0.0005 / result | [Actor](https://apify.com/webdatatools/youtube-search-scraper) |
+| `youtube_video_details` | YouTube Video Details Scraper (views, likes, description, tags) | $0.001 / video | [Actor](https://apify.com/webdatatools/youtube-video-details) |
+| `podcast_lookup` | Apple Podcasts Lookup & Episodes Scraper | $0.001 / episode | [Actor](https://apify.com/webdatatools/podcast-lookup) |
+| `bluesky_scraper` | Bluesky Post, Search & Profile Scraper | $0.0005 / post | [Actor](https://apify.com/webdatatools/bluesky-scraper) |
+| `telegram_channel_scraper` | Telegram Channel Posts Scraper | $0.0005 / Post | [Actor](https://apify.com/webdatatools/telegram-channel-scraper) |
+| `substack_scraper` | Substack Publication & Posts Scraper | $0.0005 / Post | [Actor](https://apify.com/webdatatools/substack-scraper) |
+
+## More WebDataTools MCP servers
+
+- [webdatatools-mcp-server](https://github.com/paulet4a-commits/webdatatools-mcp-server) — the 10 most popular tools in one server
+- [webdatatools-domain-mcp](https://github.com/paulet4a-commits/webdatatools-domain-mcp) — Domain & website intelligence
+- [webdatatools-rag-mcp](https://github.com/paulet4a-commits/webdatatools-rag-mcp) — Web content for AI & RAG
+- [webdatatools-leads-mcp](https://github.com/paulet4a-commits/webdatatools-leads-mcp) — Leads, jobs & company data
+- [webdatatools-dev-mcp](https://github.com/paulet4a-commits/webdatatools-dev-mcp) — Developer, app & research data
+
+## License
+
+MIT

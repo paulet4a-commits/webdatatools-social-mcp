@@ -1,0 +1,586 @@
+[
+  {
+    "name": "google_search_scraper",
+    "actor": "webdatatools~google-search-scraper",
+    "title": "Google Search Results Scraper — SERP API",
+    "description": "Google Search Results Scraper returns organic results (title, real URL, snippet, position) for any query through the Apify GOOGLE_SERP proxy — one row per SERP page, priced per page not per result. Billed to your own Apify account: ~$0.005 per result (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Search queries — Enter the Google search queries to scrape, e.g. apify web scraping. One dataset row is returned per query per result page. Example: [\"apify web scraping\"].",
+          "minItems": 1
+        },
+        "countryCode": {
+          "type": "string",
+          "default": "us",
+          "description": "Country code (gl) — Enter the 2-letter country code Google should localise results for, e.g. us, gb, de. Sent as the gl parameter."
+        },
+        "languageCode": {
+          "type": "string",
+          "default": "en",
+          "description": "Language code (hl) — Enter the 2-letter interface language code, e.g. en, es, fr. Sent as the hl parameter and affects snippet language."
+        },
+        "resultsPerPage": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 10,
+          "maximum": 100,
+          "description": "Results per page — Enter how many results Google should return per page, e.g. 10. Higher values (up to 100) fit more organic results on one billed page but Google may still cap what it actually returns."
+        },
+        "maxPagesPerQuery": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Max pages per query — Enter how many result pages to fetch per query, e.g. 1. Each extra page is a separate billed SERP page (start=N*resultsPerPage)."
+        },
+        "device": {
+          "type": "string",
+          "enum": [
+            "desktop",
+            "mobile"
+          ],
+          "default": "desktop",
+          "description": "Device — Choose desktop or mobile to control which User-Agent is sent — Google sometimes shows slightly different snippets/layout per device. Options: desktop = Desktop; mobile = Mobile."
+        },
+        "includePeopleAlsoAsk": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include People Also Ask — Keep this on to parse the People Also Ask question box. Note: Google only loads each answer's text/link after a click, so answerSnippet/url are often null — only the question text is reliably available."
+        },
+        "includeRelatedSearches": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include related searches — Keep this on to parse the related-searches suggestions shown near the bottom of the page."
+        },
+        "safeSearch": {
+          "type": "boolean",
+          "default": false,
+          "description": "SafeSearch — Turn this on to request Google's SafeSearch filtering (adds safe=active to the request)."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "queries"
+      ]
+    },
+    "arrayFields": [
+      "queries"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.005 / result"
+  },
+  {
+    "name": "youtube_comments_scraper",
+    "actor": "webdatatools~youtube-comments-scraper",
+    "title": "YouTube Comments Scraper — Comments & Replies",
+    "description": "Comments Scraper extracts comments, replies, likes and author details from any YouTube video URL or ID — no YouTube Data API key or quota needed. Billed to your own Apify account: ~$0.0005 per result (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "videos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Videos — Enter YouTube video IDs or URLs, one row is returned per comment. Accepts a bare ID (dQw4w9WgXcQ), a watch URL, a shorts URL, or a youtu.be link, e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ. Example: [\"dQw4w9WgXcQ\"].",
+          "minItems": 1
+        },
+        "maxCommentsPerVideo": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Max comments per video — Enter the maximum number of comment rows to return per video, e.g. 100. Replies count toward this cap when 'Include replies' is on. Raise this for deep sentiment analysis, lower it to sample large channels cheaply."
+        },
+        "includeReplies": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include replies — Keep this off to fetch only top-level comments (fastest, cheapest). Turn it on to also fetch replies to each comment thread — every reply needs one extra request, so runs take longer and replies count toward the per-video cap above."
+        },
+        "sortBy": {
+          "type": "string",
+          "enum": [
+            "top",
+            "newest"
+          ],
+          "default": "top",
+          "description": "Sort comments by — Choose 'top' for YouTube's featured/most-relevant comments first, or 'newest' to get the most recently posted comments first — useful for monitoring what people are saying about a video right now. Options: top = Top comments; newest = Newest first."
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "description": "Language — Enter a 2-letter language code YouTube should localize its UI text to, e.g. en. This affects labels like relative-time text ('2 days ago'), not the comments themselves."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "videos"
+      ]
+    },
+    "arrayFields": [
+      "videos"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0005 / result"
+  },
+  {
+    "name": "youtube_channel_videos",
+    "actor": "webdatatools~youtube-channel-videos",
+    "title": "YouTube Channel Latest Videos (RSS, no API key)",
+    "description": "YouTube channel latest videos scraper: give it a channel ID, @handle or channel URL and get the newest uploads with title, URL, views, likes, description and thumbnail — one row per video, no API key. Billed to your own Apify account: ~$0.001 per result (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "YouTube channels — Enter the YouTube channels to read, one row is returned per video. Every form works: a channel ID (UCX6OQ3DkcsbYNE6H8uQQuVA), a handle (@MrBeast), or a channel URL (https://www.youtube.com/@apify, /channel/UC..., /c/Name, /user/Name). Channel IDs are read directly; handles and URLs cost one extra request to look the ID up, so paste UC... IDs when you have them. Example: [\"UCX6OQ3DkcsbYNE6H8uQQuVA\"].",
+          "minItems": 1
+        },
+        "maxVideosPerChannel": {
+          "type": "integer",
+          "default": 15,
+          "minimum": 1,
+          "maximum": 15,
+          "description": "Max videos per channel — Enter how many of the newest videos to return per channel, e.g. 15. YouTube's public RSS feed only ever contains the latest 15 uploads, so 15 is both the default and the maximum — there is no way to page further back without the official Data API."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "channels"
+      ]
+    },
+    "arrayFields": [
+      "channels"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.001 / result"
+  },
+  {
+    "name": "youtube_channel_scraper",
+    "actor": "webdatatools~youtube-channel-scraper",
+    "title": "YouTube Channel Scraper (videos, shorts, live)",
+    "description": "YouTube Channel Scraper extracts videos, Shorts or livestreams from any YouTube channel — title, views, duration, publish time and thumbnail — no API key or quota needed. Billed to your own Apify account: ~$0.0005 per video (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Channels — Enter YouTube channels to scrape, one row is returned per video. Accepts a channel ID (UCX6OQ3DkcsbYNE6H8uQQuVA), a handle with or without @ (@MrBeast), or a channel/c/user URL, e.g. https://www.youtube.com/@MrBeast. Example: [\"@apify\"].",
+          "minItems": 1
+        },
+        "tab": {
+          "type": "string",
+          "enum": [
+            "videos",
+            "shorts",
+            "streams"
+          ],
+          "default": "videos",
+          "description": "Tab — Choose which channel tab to read: 'videos' for regular uploads, 'shorts' for Shorts, or 'streams' for the Live tab (past and current livestreams). A channel without that tab returns an error row for it. Options: videos = Videos; shorts = Shorts; streams = Live."
+        },
+        "sortBy": {
+          "type": "string",
+          "enum": [
+            "newest",
+            "popular"
+          ],
+          "default": "newest",
+          "description": "Sort by — Choose 'newest' for the channel's default upload order, or 'popular' to sort by view count using the channel's own 'Popular' filter. Popular sort only applies to the Videos and Live tabs; Shorts always returns newest first, and any channel without a Popular filter falls back to newest automatically. Options: newest = Newest first; popular = Most popular."
+        },
+        "maxVideosPerChannel": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 5000,
+          "description": "Max videos per channel — Enter the maximum number of video rows to return per channel, e.g. 100. The scraper pages through the channel's grid one request per ~30 videos until this cap is reached or the channel runs out of videos."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "channels"
+      ]
+    },
+    "arrayFields": [
+      "channels"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0005 / video"
+  },
+  {
+    "name": "youtube_search_scraper",
+    "actor": "webdatatools~youtube-search-scraper",
+    "title": "YouTube Search Results Scraper (videos, channels, no API key)",
+    "description": "YouTube Search Results Scraper returns videos, channels or playlists for any keyword, with title, views, duration, channel and publish time — no API key, no quota. Billed to your own Apify account: ~$0.0005 per result (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Search queries — Enter the search terms to run on YouTube, one row is returned per result, e.g. web scraping tutorial. One dataset row is produced per matching video, channel or playlist. Example: [\"web scraping tutorial\"].",
+          "minItems": 1
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "all",
+            "video",
+            "channel",
+            "playlist"
+          ],
+          "default": "video",
+          "description": "Result type — Choose what kind of result to return: all mixes videos, channels and playlists; video/channel/playlist restrict the search server-side to one kind (verified live against YouTube's search endpoint). Options: all = All (videos, channels, playlists); video = Videos only; channel = Channels only; playlist = Playlists only."
+        },
+        "uploadDate": {
+          "type": "string",
+          "enum": [
+            "any",
+            "hour",
+            "today",
+            "week",
+            "month",
+            "year"
+          ],
+          "default": "any",
+          "description": "Upload date — Only return videos uploaded within this window, e.g. week for the last 7 days. Verified live against YouTube's own upload-date filter. Ignored when Result type is channel or playlist. Options: any = Any time; hour = Last hour; today = Today; week = This week; month = This month; year = This year."
+        },
+        "sortBy": {
+          "type": "string",
+          "enum": [
+            "relevance",
+            "date",
+            "views",
+            "rating"
+          ],
+          "default": "relevance",
+          "description": "Sort by — How to order results. relevance (default) and views are applied by YouTube's server and verified live (views produces a clean view-count-descending order). date and rating could not be verified server-side during testing — for those two the Actor instead re-sorts the page(s) it already fetched by parsed publish time client-side, which is a best-effort approximation, not a true site-wide sort; see the README. Options: relevance = Relevance (default); date = Upload date (best-effort, client-side); views = View count (verified server-side); rating = Rating (best-effort, unreliable — YouTube hides ratings)."
+        },
+        "duration": {
+          "type": "string",
+          "enum": [
+            "any",
+            "short",
+            "medium",
+            "long"
+          ],
+          "default": "any",
+          "description": "Duration — Only return videos of this length: short is under 4 minutes, medium is 4-20 minutes, long is over 20 minutes. Verified live against YouTube's own duration filter. Ignored when Result type is channel or playlist. Options: any = Any length; short = Short (< 4 min); medium = Medium (4-20 min); long = Long (> 20 min)."
+        },
+        "maxResultsPerQuery": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Max results per query — Enter how many results to return per search query, e.g. 50. The Actor pages through YouTube's search continuations until it reaches this number or YouTube runs out of results."
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "description": "Interface language — Language code sent to YouTube as hl, e.g. en. Affects relative time text (\"2 days ago\") and UI strings the parser reads."
+        },
+        "region": {
+          "type": "string",
+          "default": "US",
+          "description": "Region — Country code sent to YouTube as gl, e.g. US. Affects which results and trending content YouTube considers local."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "queries"
+      ]
+    },
+    "arrayFields": [
+      "queries"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0005 / result"
+  },
+  {
+    "name": "youtube_video_details",
+    "actor": "webdatatools~youtube-video-details",
+    "title": "YouTube Video Details Scraper (views, likes, description, tags)",
+    "description": "YouTube Video Details Scraper returns views, likes, description, tags, category, channel and comment count for any YouTube video URL or ID — no YouTube Data API key or quota needed. Billed to your own Apify account: ~$0.001 per video (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "videos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Videos — Enter YouTube video IDs or URLs, one row is returned per video. Accepts a bare ID (dQw4w9WgXcQ), a watch URL, a shorts URL, or a youtu.be link, e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ. Example: [\"dQw4w9WgXcQ\"].",
+          "minItems": 1
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "description": "Language — Enter a 2-letter language code YouTube should localize its UI text to, e.g. en. This affects labels like the category name and relative date text, not the video's own title or description."
+        },
+        "region": {
+          "type": "string",
+          "default": "US",
+          "description": "Region — Enter a 2-letter country code for YouTube to use when resolving region-specific details, e.g. US."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "videos"
+      ]
+    },
+    "arrayFields": [
+      "videos"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.001 / video"
+  },
+  {
+    "name": "podcast_lookup",
+    "actor": "webdatatools~podcast-lookup",
+    "title": "Apple Podcasts Lookup & Episodes Scraper",
+    "description": "Apple Podcasts lookup by id, URL, RSS feed or search term — podcast metadata (artwork, genres, episode count) plus the full episode list from the show's own RSS feed, one row per podcast or episode. Billed to your own Apify account: ~$0.001 per episode (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "podcasts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Podcasts — Enter one podcast per row: an Apple Podcasts id (1200361736), an Apple Podcasts URL (https://podcasts.apple.com/us/podcast/the-daily/id1200361736), an RSS feed URL (https://feeds.simplecast.com/Sl5CSM3S), or a search term prefixed with search: (search:true crime, which returns up to searchLimit podcasts). Example: [\"1200361736\"].",
+          "minItems": 1
+        },
+        "country": {
+          "type": "string",
+          "default": "us",
+          "pattern": "^[A-Za-z]{2}$",
+          "description": "Storefront country — Enter the two-letter country code of the Apple Podcasts storefront to search and look up ids in, e.g. us, gb, de. Only affects the iTunes lookup/search step — an RSS feed URL entry ignores this."
+        },
+        "searchLimit": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Results per search term — Enter how many podcasts each search: term should return, e.g. 25. Only affects rows starting with search: — an id, URL or feed entry always resolves to exactly one podcast."
+        },
+        "includeEpisodes": {
+          "type": "boolean",
+          "default": true,
+          "description": "Fetch episodes from RSS — Keep this on to fetch each podcast's own RSS feed (via its feedUrl) and read its language, full description and website — and, in episodes output mode, its episode list. Turning this off skips the RSS request entirely and leaves those fields null."
+        },
+        "maxEpisodes": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Max episodes per podcast — Enter how many of the most recent episodes to read from each podcast's RSS feed, e.g. 20. Only used when includeEpisodes is on and outputMode is episodes."
+        },
+        "outputMode": {
+          "type": "string",
+          "enum": [
+            "podcasts",
+            "episodes"
+          ],
+          "default": "episodes",
+          "description": "Output mode — Choose podcasts for one row per podcast (metadata only), or episodes for one row per episode (podcast metadata repeated on every episode row). Choosing episodes automatically fetches the RSS feed even if includeEpisodes is off. Options: podcasts = One row per podcast; episodes = One row per episode."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "podcasts"
+      ]
+    },
+    "arrayFields": [
+      "podcasts"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.001 / episode"
+  },
+  {
+    "name": "bluesky_scraper",
+    "actor": "webdatatools~bluesky-scraper",
+    "title": "Bluesky Post, Search & Profile Scraper",
+    "description": "Bluesky Post, Search & Profile Scraper returns post text, engagement counts, images, profile bios, followers, follows and thread replies from Bluesky's public API — one row per item, no login required. Billed to your own Apify account: ~$0.0005 per post (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": [
+            "posts",
+            "search",
+            "profile",
+            "followers",
+            "follows",
+            "thread"
+          ],
+          "description": "Mode — Choose what to scrape. \"posts\" reads a user's own posts, \"search\" finds posts matching a query (requires an app password below — Bluesky's public search API needs a signed-in session), \"profile\"/\"followers\"/\"follows\" read account data, and \"thread\" reads one post and its replies. Options: posts = User's posts; search = Search posts; profile = Profile; followers = Followers; follows = Follows; thread = Thread. Example: \"posts\".",
+          "minLength": 1
+        },
+        "handles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Handles, DIDs or profile URLs — Enter one or more Bluesky handles, DIDs or bsky.app profile URLs, e.g. bsky.app, did:plc:z72i7hdynmk6r22z27h6tvur or https://bsky.app/profile/jay.bsky.team. Used by the \"posts\", \"profile\", \"followers\" and \"follows\" modes. Example: [\"bsky.app\"].",
+          "minItems": 1
+        },
+        "postUrl": {
+          "type": "string",
+          "description": "Post URL — Enter one post's bsky.app URL (e.g. https://bsky.app/profile/bsky.app/post/3l6oveex3ii2l) or its at:// URI. Used by the \"thread\" mode only, to fetch that post and its replies. Example: \"https://bsky.app/profile/bsky.app/post/3l6oveex3ii2l\".",
+          "minLength": 1
+        },
+        "maxItems": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 5000,
+          "description": "Max items — Enter the maximum number of rows to return per handle or per search query, e.g. 100. Raise this for bulk exports; lower it to keep runs quick."
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "latest",
+            "top"
+          ],
+          "default": "latest",
+          "description": "Sort order — Choose how search results are ordered: \"latest\" (newest first) or \"top\" (most engagement first). Used by the \"search\" mode only. Options: latest = Latest; top = Top."
+        },
+        "since": {
+          "type": "string",
+          "default": "",
+          "description": "Since (ISO date) — Enter an ISO 8601 date/time to only return posts created on or after it, e.g. 2026-01-01. Leave blank for no lower bound. Used by the \"search\" mode only."
+        },
+        "until": {
+          "type": "string",
+          "default": "",
+          "description": "Until (ISO date) — Enter an ISO 8601 date/time to only return posts created before it, e.g. 2026-06-01. Leave blank for no upper bound. Used by the \"search\" mode only."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "mode"
+      ],
+      "anyOf": [
+        {
+          "required": [
+            "handles"
+          ]
+        },
+        {
+          "required": [
+            "postUrl"
+          ]
+        }
+      ]
+    },
+    "arrayFields": [
+      "handles"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0005 / post"
+  },
+  {
+    "name": "telegram_channel_scraper",
+    "actor": "webdatatools~telegram-channel-scraper",
+    "title": "Telegram Channel Posts Scraper",
+    "description": "Scrapes public Telegram channels via the t.me/s/ web preview — post text, view counts, media flags, forwards, replies and links, one row per post, no API key or login required. Billed to your own Apify account: ~$0.0005 per Post (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Channels — Enter one public Telegram channel per row: a bare handle (telegram), an @handle (@telegram) or a t.me URL (https://t.me/telegram). The channel must have public content preview enabled at t.me/s/<handle> — private channels and groups are not supported. Example: [\"@telegram\"].",
+          "minItems": 1
+        },
+        "maxPosts": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Max posts per channel — Enter how many of the most recent posts to fetch per channel, e.g. 50. The Actor pages through https://t.me/s/<channel>?before=<id> until this many posts are collected."
+        },
+        "includeText": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include post text — Keep this on to include each post's message text and the links found inside it. Turning it off leaves text and links empty, which is faster when you only need view counts and media flags."
+        },
+        "newestFirst": {
+          "type": "boolean",
+          "default": true,
+          "description": "Newest posts first — Keep this on to sort each channel's rows from newest to oldest post. Turn it off for oldest-first order."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "channels"
+      ]
+    },
+    "arrayFields": [
+      "channels"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0005 / Post"
+  },
+  {
+    "name": "substack_scraper",
+    "actor": "webdatatools~substack-scraper",
+    "title": "Substack Publication & Posts Scraper",
+    "description": "Scrapes any Substack publication's own public JSON archive API — title, author, publish date, paywall status, word count, likes and comments per post, one row per post, with an RSS fallback and optional full article text. Billed to your own Apify account: ~$0.0005 per Post (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "publications": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Publications — Enter one Substack publication per row: a subdomain handle (bariweiss), a full subdomain (bariweiss.substack.com), or any post/publication URL on a custom domain (https://www.thefp.com or https://www.thefp.com/p/some-post). Example: [\"bariweiss\"].",
+          "minItems": 1
+        },
+        "maxPosts": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Max posts per publication — Enter how many of the most recent posts to fetch per publication, e.g. 50. The Actor pages through the publication's own archive API in batches of 50 until this many posts are collected."
+        },
+        "includeBody": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include full article text — Keep this off for metadata only (fast). Turn it on to also fetch each post's own page and extract its full article text into bodyText — one extra request per post."
+        },
+        "freeOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "Free posts only — Keep this on to skip posts marked paywalled/subscriber-only (isPaywalled) and only return posts anyone can read."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "publications"
+      ]
+    },
+    "arrayFields": [
+      "publications"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0005 / Post"
+  }
+]
