@@ -630,6 +630,38 @@
     "price": "$0.0005 / post"
   },
   {
+    "name": "tiktok_profile_scraper",
+    "actor": "webdatatools~tiktok-profile-scraper",
+    "title": "TikTok Profile Scraper (Followers, Likes, Bio, Video Stats)",
+    "description": "Get public TikTok profile data in bulk: exact follower, following, like and video counts, bio and bio link, verified, private and business flags, avatar and join date. Add video URLs for views, likes, comments, shares, saves, hashtags and music. No login. Billed to your own Apify account: ~$0.001 per profile (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Profiles — TikTok usernames or profile URLs, e.g. `nasa`, `@khaby.lame`, `https://www.tiktok.com/@charlidamelio`. Example: [\"nasa\"]."
+        },
+        "videos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Videos — Optional: TikTok video URLs (`https://www.tiktok.com/@user/video/…`) for their views, likes, comments, shares and saves."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "profiles",
+      "videos"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.001 / profile"
+  },
+  {
     "name": "telegram_channel_scraper",
     "actor": "webdatatools~telegram-channel-scraper",
     "title": "Telegram Channel Posts Scraper",
