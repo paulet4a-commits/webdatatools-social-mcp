@@ -630,6 +630,35 @@
     "price": "$0.0005 / post"
   },
   {
+    "name": "x_tweet_scraper",
+    "actor": "webdatatools~x-tweet-scraper",
+    "title": "X Tweet Scraper (Twitter Posts by URL, No Login)",
+    "description": "Get full details of X (Twitter) posts from their URLs or ids: text, date, likes, replies, author, verification, hashtags, mentions, links, photos, videos (MP4), link cards, quotes and replies. No login, cookies or API key. Billed to your own Apify account: ~$0.0005 per tweet (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "tweets": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tweets — Tweet URLs (`https://x.com/NASA/status/…`, twitter.com links work too) or plain tweet ids. Example: [\"https://x.com/jack/status/20\"]."
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "description": "Language — Language code X uses for translated labels, e.g. `en`, `de`, `tr`. Tweet text is never translated."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "tweets"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0005 / tweet"
+  },
+  {
     "name": "tiktok_profile_scraper",
     "actor": "webdatatools~tiktok-profile-scraper",
     "title": "TikTok Profile Scraper (Followers, Likes, Bio, Video Stats)",
@@ -825,5 +854,126 @@
     ],
     "urlSourceFields": [],
     "price": "$0.0002 / review"
+  },
+  {
+    "name": "google_trends_scraper",
+    "actor": "webdatatools~google-trends-scraper",
+    "title": "Google Trends Scraper",
+    "description": "Google Trends Scraper extracts search interest data from Google Trends by keyword, including interest over time, regional interest, and related search queries. Billed to your own Apify account: ~$0.01 per keyword (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "maxItems": 100,
+          "description": "Keywords — Enter the keywords to scrape Google Trends data for, e.g. [\"coffee\", \"tea\"]. Maximum 100 keywords. Example: [\"coffee\"]."
+        },
+        "geo": {
+          "type": "string",
+          "default": "",
+          "description": "Geographic location — Enter the 2-letter country code, e.g. US, GB, DE. Leave empty for worldwide data."
+        },
+        "timeframe": {
+          "type": "string",
+          "enum": [
+            "now 1-d",
+            "now 7-d",
+            "today 1-m",
+            "today 3-m",
+            "today 12-m",
+            "today 5-y",
+            "all"
+          ],
+          "default": "today 12-m",
+          "description": "Timeframe — Select the time period for interest data. Options: now 1-d = Past 1 day; now 7-d = Past 7 days; today 1-m = Past month; today 3-m = Past 3 months; today 12-m = Past 12 months; today 5-y = Past 5 years; all = All time."
+        },
+        "category": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "description": "Category — Enter the Google Trends category ID, e.g. 0 for all categories. Most common: 0 (all), 20 (news), 101 (business)."
+        },
+        "includeRegions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include regional breakdown — Include interest by region/state in the output."
+        },
+        "includeRelatedQueries": {
+          "type": "boolean",
+          "default": true,
+          "description": "Include related queries — Include top and rising related search queries in the output."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "keywords"
+      ]
+    },
+    "arrayFields": [
+      "keywords"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.01 / keyword"
+  },
+  {
+    "name": "google_ads_transparency_scraper",
+    "actor": "webdatatools~google-ads-transparency-scraper",
+    "title": "Google Ads Transparency Scraper",
+    "description": "Google Ads Transparency Scraper extracts ad creatives from Google's Ad Transparency Center. Search by advertiser domain, advertiser ID, or name, filter by region and date range, and retrieve creative details including text, images, video previews, and show/hide dates. Billed to your own Apify account: ~$0.001 per ad (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "advertisers": {
+          "type": "string",
+          "description": "Advertisers — Enter advertiser domains (e.g., nike.com), advertiser IDs (e.g., AR123456789), or advertiser names (e.g., Nike), separated by semicolons. Example: \"nike.com; shopify.com\" Example: \"nike.com\"."
+        },
+        "domain": {
+          "type": "string",
+          "description": "Advertiser domain (alias) — Alias for 'advertisers'. Enter a single domain (e.g., nike.com). Use 'advertisers' for multiple values."
+        },
+        "advertiser": {
+          "type": "string",
+          "description": "Advertiser (alias) — Alias for 'advertisers'. Enter a single advertiser domain, ID, or name."
+        },
+        "region": {
+          "type": "string",
+          "description": "Region — Enter a region code (e.g., US, GB, DE) to filter ads by region. Leave empty to include all regions. Example: \"US\"."
+        },
+        "dateFrom": {
+          "type": "string",
+          "description": "Date from — Optional start date for ad range (ISO 8601 format, e.g., 2024-01-01). Leave empty for no filter."
+        },
+        "dateTo": {
+          "type": "string",
+          "description": "Date to — Optional end date for ad range (ISO 8601 format, e.g., 2024-12-31). Leave empty for no filter."
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "all",
+            "text",
+            "image",
+            "video"
+          ],
+          "default": "all",
+          "description": "Ad format — Filter by ad format: all, text, image, or video."
+        },
+        "maxAds": {
+          "type": "integer",
+          "default": 40,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Max ads per advertiser — Maximum number of ads to retrieve per advertiser (default 40, max 100). API limit is 100 results per query."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [],
+    "urlSourceFields": [],
+    "price": "$0.001 / ad"
   }
 ]
