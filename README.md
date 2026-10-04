@@ -1,7 +1,7 @@
 # WebDataTools Search, video & social data MCP server
 `webdatatools-social-mcp`
 
-An MCP server with 17 search, video & social data tools for AI agents — Claude Desktop, Cursor, Cline or any MCP client. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.
+An MCP server with 18 search, video & social data tools for AI agents — Claude Desktop, Cursor, Cline or any MCP client. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.
 
 **This server uses *your own* Apify API token.** Every tool call runs a [WebDataTools](https://apify.com/webdatatools) Actor under your Apify account and is billed to your Apify credit — pay per result, the price is in each tool description. Your token is only sent to Apify's API.
 
@@ -36,7 +36,7 @@ Add this to `claude_desktop_config.json` (Claude Desktop) or `.cursor/mcp.json` 
 }
 ```
 
-## Tools (17)
+## Tools (18)
 
 | Tool | What it does | Price (free plan) | Backing Actor |
 |---|---|---|---|
@@ -55,6 +55,7 @@ Add this to `claude_desktop_config.json` (Claude Desktop) or `.cursor/mcp.json` 
 | `telegram_channel_scraper` | Telegram Channel Posts Scraper | $0.0005 / Post | [Actor](https://apify.com/webdatatools/telegram-channel-scraper) |
 | `substack_scraper` | Substack Publication & Posts Scraper | $0.0005 / Post | [Actor](https://apify.com/webdatatools/substack-scraper) |
 | `google_play_reviews_scraper` | Google Play Reviews Scraper | $0.0002 / review | [Actor](https://apify.com/webdatatools/google-play-reviews-scraper) |
+| `trustpilot_reviews_scraper` | Trustpilot Reviews Scraper (Ratings, Replies, No Login) | $0.001 / review | [Actor](https://apify.com/webdatatools/trustpilot-reviews-scraper) |
 | `google_trends_scraper` | Google Trends Scraper | $0.01 / keyword | [Actor](https://apify.com/webdatatools/google-trends-scraper) |
 | `google_ads_transparency_scraper` | Google Ads Transparency Scraper | $0.001 / ad | [Actor](https://apify.com/webdatatools/google-ads-transparency-scraper) |
 

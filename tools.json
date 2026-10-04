@@ -856,6 +856,86 @@
     "price": "$0.0002 / review"
   },
   {
+    "name": "trustpilot_reviews_scraper",
+    "actor": "webdatatools~trustpilot-reviews-scraper",
+    "title": "Trustpilot Reviews Scraper (Ratings, Replies, No Login)",
+    "description": "Scrape Trustpilot reviews for any company: star rating, title, full text, language, dates, verification, reviewer country and the company’s reply, plus TrustScore and review count. Real browser, no login or cookies needed. Billed to your own Apify account: ~$0.001 per review (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "companies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Companies — Company websites or Trustpilot review page URLs, e.g. `nordvpn.com` or `https://www.trustpilot.com/review/www.revolut.com`. Example: [\"www.nordvpn.com\"]."
+        },
+        "maxReviewsPerCompany": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 5000,
+          "description": "Max reviews per company — Newest first. Past 200, the Actor splits the request by language and star rating (see README)."
+        },
+        "stars": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "5",
+              "4",
+              "3",
+              "2",
+              "1"
+            ],
+            "enumTitles": [
+              "5 stars",
+              "4 stars",
+              "3 stars",
+              "2 stars",
+              "1 star"
+            ]
+          },
+          "description": "Star ratings — Only these ratings. Leave empty for all. Options: 5 = 5 stars; 4 = 4 stars; 3 = 3 stars; 2 = 2 stars; 1 = 1 star."
+        },
+        "languages": {
+          "type": "string",
+          "default": "all",
+          "description": "Languages — `all` (default) or ISO codes separated by `,`, e.g. `en,de,fr`."
+        },
+        "date": {
+          "type": "string",
+          "enum": [
+            "any",
+            "last30days",
+            "last3months",
+            "last6months",
+            "last12months"
+          ],
+          "default": "any",
+          "description": "Published within — Only reviews from this period. Options: any = Any time; last30days = Last 30 days; last3months = Last 3 months; last6months = Last 6 months; last12months = Last 12 months."
+        },
+        "verifiedOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "Verified reviews only — Only reviews Trustpilot marks as verified."
+        },
+        "withRepliesOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "With company reply only — Only reviews the company answered."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "companies",
+      "stars"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.001 / review"
+  },
+  {
     "name": "google_trends_scraper",
     "actor": "webdatatools~google-trends-scraper",
     "title": "Google Trends Scraper",
