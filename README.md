@@ -1,7 +1,7 @@
 # WebDataTools Search, video & social data MCP server
 `webdatatools-social-mcp`
 
-An MCP server with 18 search, video & social data tools for AI agents — Claude Desktop, Cursor, Cline or any MCP client. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.
+An MCP server with 20 search, video & social data tools for AI agents — Claude Desktop, Cursor, Cline or any MCP client. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.
 
 **This server uses *your own* Apify API token.** Every tool call runs a [WebDataTools](https://apify.com/webdatatools) Actor under your Apify account and is billed to your Apify credit — pay per result, the price is in each tool description. Your token is only sent to Apify's API.
 
@@ -36,11 +36,12 @@ Add this to `claude_desktop_config.json` (Claude Desktop) or `.cursor/mcp.json` 
 }
 ```
 
-## Tools (18)
+## Tools (20)
 
 | Tool | What it does | Price (free plan) | Backing Actor |
 |---|---|---|---|
 | `youtube_shorts_scraper` | YouTube Shorts Scraper | $0.001 / short | [Actor](https://apify.com/webdatatools/youtube-shorts-scraper) |
+| `pinterest_pins_scraper` | Pinterest Pins Scraper | $0.0005 / pin | [Actor](https://apify.com/webdatatools/pinterest-pins-scraper) |
 | `youtube_transcript_scraper` | YouTube Transcript Scraper | $0.004 / video | [Actor](https://apify.com/webdatatools/youtube-transcript-scraper) |
 | `google_search_scraper` | Google Search Results Scraper — SERP API | $0.005 / result | [Actor](https://apify.com/webdatatools/google-search-scraper) |
 | `youtube_comments_scraper` | YouTube Comments Scraper — Comments & Replies | $0.0005 / result | [Actor](https://apify.com/webdatatools/youtube-comments-scraper) |
@@ -58,6 +59,7 @@ Add this to `claude_desktop_config.json` (Claude Desktop) or `.cursor/mcp.json` 
 | `trustpilot_reviews_scraper` | Trustpilot Reviews Scraper (Ratings, Replies, No Login) | $0.001 / review | [Actor](https://apify.com/webdatatools/trustpilot-reviews-scraper) |
 | `google_trends_scraper` | Google Trends Scraper | $0.01 / keyword | [Actor](https://apify.com/webdatatools/google-trends-scraper) |
 | `google_ads_transparency_scraper` | Google Ads Transparency Scraper | $0.001 / ad | [Actor](https://apify.com/webdatatools/google-ads-transparency-scraper) |
+| `bilibili_scraper` | Bilibili Scraper (Videos, Search, Popular) | $0.003 / video | [Actor](https://apify.com/webdatatools/bilibili-scraper) |
 
 ## More WebDataTools MCP servers
 

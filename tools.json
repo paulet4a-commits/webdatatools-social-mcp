@@ -72,6 +72,59 @@
     "price": "$0.001 / short"
   },
   {
+    "name": "pinterest_pins_scraper",
+    "actor": "webdatatools~pinterest-pins-scraper",
+    "title": "Pinterest Pins Scraper",
+    "description": "Pinterest Pins Scraper extracts the latest pins from public Pinterest profiles and boards. Get up to 25 recent pins per profile or board from Pinterest's public RSS feeds, no login required. Billed to your own Apify account: ~$0.0005 per pin (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "profiles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Profiles — Enter Pinterest usernames or profile URLs to scrape the latest pins from, e.g. \"nasa\" or https://www.pinterest.com/nasa/. Each profile returns up to 25 pins (Pinterest's public RSS feed caps at 25). Example: [\"nasa\"].",
+          "minItems": 1
+        },
+        "boards": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Boards — Enter Pinterest board URLs to scrape the latest pins from, e.g. https://www.pinterest.com/nasa/space-exploration/. Each board returns up to 25 pins (Pinterest's public RSS feed caps at 25). Example: [].",
+          "minItems": 1
+        },
+        "maxPinsPerSource": {
+          "type": "integer",
+          "default": 25,
+          "minimum": 1,
+          "maximum": 25,
+          "description": "Max pins per source — Enter the maximum number of pins to return per profile or board, e.g. 25. Pinterest's public RSS feed only ever returns the latest 25 pins, so this cannot go above 25."
+        }
+      },
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "profiles"
+          ]
+        },
+        {
+          "required": [
+            "boards"
+          ]
+        }
+      ]
+    },
+    "arrayFields": [
+      "profiles",
+      "boards"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0005 / pin"
+  },
+  {
     "name": "youtube_transcript_scraper",
     "actor": "webdatatools~youtube-transcript-scraper",
     "title": "YouTube Transcript Scraper",
@@ -1055,5 +1108,52 @@
     "arrayFields": [],
     "urlSourceFields": [],
     "price": "$0.001 / ad"
+  },
+  {
+    "name": "bilibili_scraper",
+    "actor": "webdatatools~bilibili-scraper",
+    "title": "Bilibili Scraper (Videos, Search, Popular)",
+    "description": "Scrape Bilibili (哔哩哔哩) videos by keyword, video URL or the popular list: title, uploader, category, views, likes, coins, favorites, danmaku, comments, duration, tags. No login. Billed to your own Apify account: ~$0.003 per video (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "searchKeywords": {
+          "type": "string",
+          "description": "Search keywords — Search Bilibili for videos, several keywords separated by `;` (e.g. `python; 原神; lofi`). Leave everything empty to get the currently popular videos. Example: \"python tutorial\"."
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords (alias) — Same as Search keywords, as a list (merged with it). Example: []."
+        },
+        "videoUrls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Video URLs or IDs — Bilibili video URLs (https://www.bilibili.com/video/BV…) or BV ids, one per line. Example: []."
+        },
+        "popular": {
+          "type": "boolean",
+          "description": "Fetch popular videos — Also fetch the currently popular videos (热门). Used automatically when nothing else is given. Example: false."
+        },
+        "maxVideos": {
+          "type": "integer",
+          "default": 30,
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Max videos — Maximum videos per keyword (and for popular)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "keywords",
+      "videoUrls"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.003 / video"
   }
 ]
