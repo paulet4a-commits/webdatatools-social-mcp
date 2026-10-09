@@ -192,7 +192,7 @@
     "name": "google_search_scraper",
     "actor": "webdatatools~google-search-scraper",
     "title": "Google Search Results Scraper — SERP API",
-    "description": "Google Search Results Scraper returns organic results (title, real URL, snippet, position) for any query through the Apify GOOGLE_SERP proxy — one row per SERP page, priced per page not per result. Billed to your own Apify account: ~$0.005 per result (Apify free-plan price, lower on paid plans).",
+    "description": "Google Search Results Scraper returns organic results (title, real URL, snippet, position) for any query through the Apify GOOGLE_SERP proxy — one row per SERP page, and each row is one billed result. Billed to your own Apify account: ~$0.005 per result (Apify free-plan price, lower on paid plans).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -201,7 +201,7 @@
           "items": {
             "type": "string"
           },
-          "description": "Search queries — Enter the Google search queries to scrape, e.g. apify web scraping. One dataset row is returned per query per result page. Example: [\"apify web scraping\"].",
+          "description": "Search queries — Enter the Google search queries to scrape, e.g. apify web scraping. One dataset row is returned per query per result page (each row is one billed SERP page). Rows are saved as they finish; if the run timeout is near, the Actor stops early and still ends SUCCEEDED with the pages done so far. Example: [\"apify web scraping\"].",
           "minItems": 1
         },
         "countryCode": {
@@ -226,7 +226,7 @@
           "default": 1,
           "minimum": 1,
           "maximum": 10,
-          "description": "Max pages per query — Enter how many result pages to fetch per query, e.g. 1. Each extra page is a separate billed SERP page (start=N*resultsPerPage)."
+          "description": "Max pages per query — Enter how many result pages to fetch per query, e.g. 1. Each extra page is a separate billed SERP page (start=N*resultsPerPage). Total pages = queries x this value; when choosing the run timeout, allow about 2 s per page divided by Max concurrency."
         },
         "device": {
           "type": "string",
@@ -240,12 +240,12 @@
         "includePeopleAlsoAsk": {
           "type": "boolean",
           "default": true,
-          "description": "Include People Also Ask — Keep this on to parse the People Also Ask question box. Note: Google only loads each answer's text/link after a click, so answerSnippet/url are often null — only the question text is reliably available."
+          "description": "Include People Also Ask — Leave on to parse the People Also Ask box. The basic-HTML Google page this Actor fetches (for real result URLs) rarely contains it, so peopleAlsoAsk is usually empty; it is filled whenever Google does render the box. Does not change the price."
         },
         "includeRelatedSearches": {
           "type": "boolean",
           "default": true,
-          "description": "Include related searches — Keep this on to parse the related-searches suggestions shown near the bottom of the page."
+          "description": "Include related searches — Leave on to parse the related-searches suggestions. Like People Also Ask, Google's basic-HTML page rarely includes them, so expect relatedSearches to be empty on most pages. Does not change the price."
         },
         "safeSearch": {
           "type": "boolean",
@@ -907,6 +907,59 @@
     ],
     "urlSourceFields": [],
     "price": "$0.0002 / review"
+  },
+  {
+    "name": "app_store_reviews_scraper",
+    "actor": "webdatatools~app-store-reviews-scraper",
+    "title": "App Store Reviews Scraper",
+    "description": "App Store Reviews Scraper returns customer reviews from Apple's App Store by app ID. Scrape up to 500 reviews per app per country from the public RSS feed. Billed to your own Apify account: ~$0.0001 per review (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "appIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "description": "App IDs — Enter the app IDs to scrape reviews from. Use the numeric app ID, e.g. 284882215, or an App Store URL, e.g. https://apps.apple.com/us/app/facebook/id284882215. Example: [\"284882215\"]."
+        },
+        "countries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "us"
+          ],
+          "description": "Countries — Enter the list of 2-letter country codes to scrape reviews from, e.g. [\"us\", \"gb\", \"de\"]. Each country is limited to 500 reviews maximum. More countries = more reviews from different regions."
+        },
+        "maxReviews": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 500,
+          "description": "Max reviews per country — Enter the maximum number of reviews to fetch per app per country, e.g. 100. Maximum 500 per country (Apple's RSS limit)."
+        },
+        "ratings": {
+          "type": "array",
+          "items": {},
+          "default": [],
+          "description": "Filter by star rating — Optionally filter reviews by star rating. Leave empty to include all ratings. Enter as a JSON array, e.g. [1, 5] to get only 1-star and 5-star reviews."
+        }
+      },
+      "additionalProperties": false,
+      "required": [
+        "appIds"
+      ]
+    },
+    "arrayFields": [
+      "appIds",
+      "countries",
+      "ratings"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0001 / review"
   },
   {
     "name": "trustpilot_reviews_scraper",
