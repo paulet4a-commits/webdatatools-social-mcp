@@ -3,7 +3,7 @@
     "name": "youtube_shorts_scraper",
     "actor": "webdatatools~youtube-shorts-scraper",
     "title": "YouTube Shorts Scraper",
-    "description": "YouTube Shorts Scraper collects Shorts from channels, #hashtag feeds and Shorts search — video ID, URL, title, view count, channel and thumbnail per Short, with no API key or quota. Billed to your own Apify account: ~$0.001 per short (Apify free-plan price, lower on paid plans).",
+    "description": "YouTube Shorts Scraper collects Shorts from channels, #hashtag feeds and Shorts search: video ID, URL, title, view count, channel name and @handle, thumbnail, and with details the exact publish date, description and hashtags. No API key or quota. Billed to your own Apify account: ~$0.003 per short (Apify free-plan price, lower on paid plans).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -41,7 +41,11 @@
         "includeDetails": {
           "type": "boolean",
           "default": false,
-          "description": "Include details — Also fetch each Short's description, length in seconds, tags, exact view count and channel name (one extra ~9 KB request per Short). Off = faster, card data only."
+          "description": "Include details — Also fetch each Short's description, length in seconds, tags, exact view count, channel name and @handle, and exact publish date (two extra ~9 KB requests per Short). Off = faster, card data only."
+        },
+        "publishedAfter": {
+          "type": "string",
+          "description": "Published after — Optional. Keep only Shorts published on or after this date, ISO format, e.g. 2026-10-01. Older Shorts are dropped before they are returned, so they are not charged. Adds one request per Short to read the publish date; Shorts whose date YouTube does not return are kept."
         }
       },
       "additionalProperties": false,
@@ -69,13 +73,13 @@
       "searchQueries"
     ],
     "urlSourceFields": [],
-    "price": "$0.001 / short"
+    "price": "$0.003 / short"
   },
   {
     "name": "pinterest_pins_scraper",
     "actor": "webdatatools~pinterest-pins-scraper",
     "title": "Pinterest Pins Scraper",
-    "description": "Pinterest Pins Scraper extracts the latest pins from public Pinterest profiles and boards. Get up to 25 recent pins per profile or board from Pinterest's public RSS feeds, no login required. Billed to your own Apify account: ~$0.0005 per pin (Apify free-plan price, lower on paid plans).",
+    "description": "Pinterest Pins Scraper extracts the latest pins from public Pinterest profiles and boards. Get up to 25 recent pins per profile or board from Pinterest's public RSS feeds, no login required. Billed to your own Apify account: ~$0.0022 per pin (Apify free-plan price, lower on paid plans).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -122,13 +126,13 @@
       "boards"
     ],
     "urlSourceFields": [],
-    "price": "$0.0005 / pin"
+    "price": "$0.0022 / pin"
   },
   {
     "name": "youtube_transcript_scraper",
     "actor": "webdatatools~youtube-transcript-scraper",
     "title": "YouTube Transcript Scraper",
-    "description": "Extract YouTube video transcripts, captions, and subtitles in JSON format with segments and timestamps. Supports multiple languages and auto-generated captions. Billed to your own Apify account: ~$0.004 per video (Apify free-plan price, lower on paid plans).",
+    "description": "1 result = the full transcript of 1 video, $0.004/video (FREE). YouTube captions with timestamped segments, publish date, view count and a completeness check. Multiple languages and auto-generated captions. Billed to your own Apify account: ~$0.004 per video (Apify free-plan price, lower on paid plans).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -219,14 +223,37 @@
           "default": 10,
           "minimum": 10,
           "maximum": 100,
-          "description": "Results per page — Enter how many results Google should return per page, e.g. 10. Higher values (up to 100) fit more organic results on one billed page but Google may still cap what it actually returns."
+          "description": "Results per page — Sent to Google as num, e.g. 10. Google currently ignores it and returns about 10 organic results per page (a 9 Oct 2026 test with 100 gave 9), so use Max pages per query to get more results."
         },
         "maxPagesPerQuery": {
           "type": "integer",
           "default": 1,
           "minimum": 1,
           "maximum": 10,
-          "description": "Max pages per query — Enter how many result pages to fetch per query, e.g. 1. Each extra page is a separate billed SERP page (start=N*resultsPerPage). Total pages = queries x this value; when choosing the run timeout, allow about 2 s per page divided by Max concurrency."
+          "description": "Max pages per query — Enter how many result pages to fetch per query, e.g. 1. Each extra page is the next ~10 results (start=10, 20, …) and a separate billed SERP page. Total pages = queries x this value; when choosing the run timeout, allow about 2 s per page divided by Max concurrency."
+        },
+        "dateRange": {
+          "type": "string",
+          "enum": [
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year"
+          ],
+          "description": "Date range — Optional. Only results from the past hour, day, week, month or year (Google's Tools > Any time filter, sent as tbs=qdr:). Options: hour = Past hour; day = Past 24 hours; week = Past week; month = Past month; year = Past year."
+        },
+        "site": {
+          "type": "string",
+          "description": "Only this site — Optional. Restrict every query to one domain or TLD, e.g. reddit.com or gov — adds site: to each query."
+        },
+        "fileType": {
+          "type": "string",
+          "description": "File type — Optional. Only documents of this type, e.g. pdf, docx, xlsx — adds filetype: to each query."
+        },
+        "exactPhrase": {
+          "type": "string",
+          "description": "Exact phrase — Optional. A phrase every result must contain word for word — added to each query in quotes."
         },
         "device": {
           "type": "string",
@@ -251,6 +278,11 @@
           "type": "boolean",
           "default": false,
           "description": "SafeSearch — Turn this on to request Google's SafeSearch filtering (adds safe=active to the request)."
+        },
+        "debugHtml": {
+          "type": "boolean",
+          "default": false,
+          "description": "Save raw page HTML (debug) — Turn on only when reporting a parsing problem: saves every fetched Google page as PAGE_<n>.html in the run's key-value store. Does not change the price or the results."
         }
       },
       "additionalProperties": false,
@@ -1045,7 +1077,7 @@
     "name": "google_trends_scraper",
     "actor": "webdatatools~google-trends-scraper",
     "title": "Google Trends Scraper",
-    "description": "Google Trends Scraper extracts search interest data from Google Trends by keyword, including interest over time, regional interest, and related search queries. Billed to your own Apify account: ~$0.01 per keyword (Apify free-plan price, lower on paid plans).",
+    "description": "Google Trends Scraper extracts search interest data from Google Trends by keyword, including interest over time, regional interest, and related search queries. Billed to your own Apify account: ~$0.0025 per keyword (Apify free-plan price, lower on paid plans).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -1103,7 +1135,7 @@
       "keywords"
     ],
     "urlSourceFields": [],
-    "price": "$0.01 / keyword"
+    "price": "$0.0025 / keyword"
   },
   {
     "name": "google_ads_transparency_scraper",
@@ -1161,6 +1193,67 @@
     "arrayFields": [],
     "urlSourceFields": [],
     "price": "$0.001 / ad"
+  },
+  {
+    "name": "keyword_suggestions_scraper",
+    "actor": "webdatatools~keyword-suggestions-scraper",
+    "title": "Keyword Suggestions Scraper (Google, YouTube, Amazon, Bing)",
+    "description": "Scrape keyword suggestions from Google, YouTube, Amazon, and Bing search autocomplete APIs. Get related keywords, expansion options (A–Z alphabet, common questions), and multi-source deduplication. Billed to your own Apify account: ~$0.0005 per keyword (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "keywords": {
+          "type": "string",
+          "default": "running shoes",
+          "description": "Keywords — Enter one or more keywords separated by semicolons, e.g. 'running shoes; standing desk'. Alias: keyword, query."
+        },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "google"
+          ],
+          "description": "Sources — Which sources to query for suggestions: google, youtube, amazon, bing."
+        },
+        "language": {
+          "type": "string",
+          "default": "en",
+          "description": "Language — Language code, e.g. en, de, fr. Default: en"
+        },
+        "country": {
+          "type": "string",
+          "default": "US",
+          "description": "Country — Country code for locale, e.g. US, GB, DE. Default: US"
+        },
+        "expand": {
+          "type": "string",
+          "default": "none",
+          "description": "Expansion mode — Optional expansion: 'none' (default), 'alphabet' (A–Z), or 'questions' (who/what/why/how/when/where/can/is/etc)."
+        },
+        "maxDepth": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 2,
+          "description": "Max depth — How many levels to expand suggestions: 1 (default) or 2 (query suggestions themselves for more depth)."
+        },
+        "maxKeywords": {
+          "type": "integer",
+          "default": 200,
+          "minimum": 1,
+          "maximum": 10000,
+          "description": "Max keywords — Maximum keywords to extract per run. Default: 200."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "sources"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0005 / keyword"
   },
   {
     "name": "bilibili_scraper",
