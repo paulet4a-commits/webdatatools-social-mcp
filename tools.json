@@ -1301,5 +1301,54 @@
     ],
     "urlSourceFields": [],
     "price": "$0.003 / video"
+  },
+  {
+    "name": "meetup_events_scraper",
+    "actor": "webdatatools~meetup-events-scraper",
+    "title": "Meetup Events Scraper (Search by Keyword & City)",
+    "description": "Scrape upcoming Meetup.com events by keyword and city: date, in-person/online type, RSVPs, fee, venue address and coordinates, group and its rating. All pages, no login. Billed to your own Apify account: ~$0.001 per event (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "keywords": {
+          "type": "string",
+          "description": "Keywords — What to search for, several keywords separated by `;` (e.g. `python; product management; hiking`). Leave empty to get all upcoming events in the location. Example: \"python\"."
+        },
+        "location": {
+          "type": "string",
+          "description": "Location — City or region, several separated by `;` (e.g. `New York; London; Berlin`). Leave empty to get online events. Example: \"New York\"."
+        },
+        "eventType": {
+          "type": "string",
+          "enum": [
+            "any",
+            "in-person",
+            "online"
+          ],
+          "default": "any",
+          "description": "Event type — Any, in-person only, or online only (online includes hybrid events). Options: any = Any; in-person = In person; online = Online."
+        },
+        "searchUrls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Meetup search URLs — Optional: meetup.com/find/ URLs copied from your browser (keywords, location and event type are read from them)."
+        },
+        "maxEvents": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 2000,
+          "description": "Max events per search — Maximum events for each keyword × location."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "searchUrls"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.001 / event"
   }
 ]

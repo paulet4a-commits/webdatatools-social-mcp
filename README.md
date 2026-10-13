@@ -1,7 +1,7 @@
 # WebDataTools Search, video & social data MCP server
 `webdatatools-social-mcp`
 
-An MCP server with 22 search, video & social data tools for AI agents — Claude Desktop, Cursor, Cline or any MCP client. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.
+An MCP server with 23 search, video & social data tools for AI agents — Claude Desktop, Cursor, Cline or any MCP client. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.
 
 **This server uses *your own* Apify API token.** Every tool call runs a [WebDataTools](https://apify.com/webdatatools) Actor under your Apify account and is billed to your Apify credit — pay per result, the price is in each tool description. Your token is only sent to Apify's API.
 
@@ -36,7 +36,7 @@ Add this to `claude_desktop_config.json` (Claude Desktop) or `.cursor/mcp.json` 
 }
 ```
 
-## Tools (22)
+## Tools (23)
 
 | Tool | What it does | Price (free plan) | Backing Actor |
 |---|---|---|---|
@@ -62,6 +62,7 @@ Add this to `claude_desktop_config.json` (Claude Desktop) or `.cursor/mcp.json` 
 | `google_ads_transparency_scraper` | Google Ads Transparency Scraper | $0.001 / ad | [Actor](https://apify.com/webdatatools/google-ads-transparency-scraper) |
 | `keyword_suggestions_scraper` | Keyword Suggestions Scraper (Google, YouTube, Amazon, Bing) | $0.0005 / keyword | [Actor](https://apify.com/webdatatools/keyword-suggestions-scraper) |
 | `bilibili_scraper` | Bilibili Scraper (Videos, Search, Popular) | $0.003 / video | [Actor](https://apify.com/webdatatools/bilibili-scraper) |
+| `meetup_events_scraper` | Meetup Events Scraper (Search by Keyword & City) | $0.001 / event | [Actor](https://apify.com/webdatatools/meetup-events-scraper) |
 
 ## More WebDataTools MCP servers
 
