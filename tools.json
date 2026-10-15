@@ -727,7 +727,8 @@
           "items": {
             "type": "string"
           },
-          "description": "Tweets — Tweet URLs (`https://x.com/NASA/status/…`, twitter.com links work too) or plain tweet ids. Example: [\"https://x.com/jack/status/20\"]."
+          "description": "Tweets — Tweet URLs (`https://x.com/NASA/status/…`, twitter.com links work too) or plain tweet ids. Example: [\"https://x.com/jack/status/20\"].",
+          "minItems": 1
         },
         "language": {
           "type": "string",
@@ -735,7 +736,10 @@
           "description": "Language — Language code X uses for translated labels, e.g. `en`, `de`, `tr`. Tweet text is never translated."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "tweets"
+      ]
     },
     "arrayFields": [
       "tweets"
@@ -756,17 +760,31 @@
           "items": {
             "type": "string"
           },
-          "description": "Profiles — TikTok usernames or profile URLs, e.g. `nasa`, `@khaby.lame`, `https://www.tiktok.com/@charlidamelio`. Example: [\"nasa\"]."
+          "description": "Profiles — TikTok usernames or profile URLs, e.g. `nasa`, `@khaby.lame`, `https://www.tiktok.com/@charlidamelio`. Example: [\"nasa\"].",
+          "minItems": 1
         },
         "videos": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Videos — Optional: TikTok video URLs (`https://www.tiktok.com/@user/video/…`) for their views, likes, comments, shares and saves."
+          "description": "Videos — Optional: TikTok video URLs (`https://www.tiktok.com/@user/video/…`) for their views, likes, comments, shares and saves.",
+          "minItems": 1
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "profiles"
+          ]
+        },
+        {
+          "required": [
+            "videos"
+          ]
+        }
+      ]
     },
     "arrayFields": [
       "profiles",
@@ -1006,7 +1024,8 @@
           "items": {
             "type": "string"
           },
-          "description": "Companies — Company websites or Trustpilot review page URLs, e.g. `nordvpn.com` or `https://www.trustpilot.com/review/www.revolut.com`. Example: [\"www.nordvpn.com\"]."
+          "description": "Companies — Company websites or Trustpilot review page URLs, e.g. `nordvpn.com` or `https://www.trustpilot.com/review/www.revolut.com`. Example: [\"www.nordvpn.com\"].",
+          "minItems": 1
         },
         "maxReviewsPerCompany": {
           "type": "integer",
@@ -1064,7 +1083,10 @@
           "description": "With company reply only — Only reviews the company answered."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "companies"
+      ]
     },
     "arrayFields": [
       "companies",
@@ -1147,15 +1169,18 @@
       "properties": {
         "advertisers": {
           "type": "string",
-          "description": "Advertisers — Enter advertiser domains (e.g., nike.com), advertiser IDs (e.g., AR123456789), or advertiser names (e.g., Nike), separated by semicolons. Example: \"nike.com; shopify.com\" Example: \"nike.com\"."
+          "description": "Advertisers — Enter advertiser domains (e.g., nike.com), advertiser IDs (e.g., AR123456789), or advertiser names (e.g., Nike), separated by semicolons. Example: \"nike.com; shopify.com\" Example: \"nike.com\".",
+          "minLength": 1
         },
         "domain": {
           "type": "string",
-          "description": "Advertiser domain (alias) — Alias for 'advertisers'. Enter a single domain (e.g., nike.com). Use 'advertisers' for multiple values."
+          "description": "Advertiser domain (alias) — Alias for 'advertisers'. Enter a single domain (e.g., nike.com). Use 'advertisers' for multiple values.",
+          "minLength": 1
         },
         "advertiser": {
           "type": "string",
-          "description": "Advertiser (alias) — Alias for 'advertisers'. Enter a single advertiser domain, ID, or name."
+          "description": "Advertiser (alias) — Alias for 'advertisers'. Enter a single advertiser domain, ID, or name.",
+          "minLength": 1
         },
         "region": {
           "type": "string",
@@ -1188,7 +1213,24 @@
           "description": "Max ads per advertiser — Maximum number of ads to retrieve per advertiser (default 40, max 100). API limit is 100 results per query."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "advertisers"
+          ]
+        },
+        {
+          "required": [
+            "domain"
+          ]
+        },
+        {
+          "required": [
+            "advertiser"
+          ]
+        }
+      ]
     },
     "arrayFields": [],
     "urlSourceFields": [],
@@ -1204,8 +1246,8 @@
       "properties": {
         "keywords": {
           "type": "string",
-          "default": "running shoes",
-          "description": "Keywords — Enter one or more keywords separated by semicolons, e.g. 'running shoes; standing desk'. Alias: keyword, query."
+          "description": "Keywords — Enter one or more keywords separated by semicolons, e.g. 'running shoes; standing desk'. Alias: keyword, query. Example: \"running shoes\".",
+          "minLength": 1
         },
         "sources": {
           "type": "array",
@@ -1247,7 +1289,10 @@
           "description": "Max keywords — Maximum keywords to extract per run. Default: 200."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "required": [
+        "keywords"
+      ]
     },
     "arrayFields": [
       "sources"
@@ -1265,21 +1310,24 @@
       "properties": {
         "searchKeywords": {
           "type": "string",
-          "description": "Search keywords — Search Bilibili for videos, several keywords separated by `;` (e.g. `python; 原神; lofi`). Leave everything empty to get the currently popular videos. Example: \"python tutorial\"."
+          "description": "Search keywords — Search Bilibili for videos, several keywords separated by `;` (e.g. `python; 原神; lofi`). Leave everything empty to get the currently popular videos. Example: \"python tutorial\".",
+          "minLength": 1
         },
         "keywords": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Keywords (alias) — Same as Search keywords, as a list (merged with it). Example: []."
+          "description": "Keywords (alias) — Same as Search keywords, as a list (merged with it). Example: [].",
+          "minItems": 1
         },
         "videoUrls": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Video URLs or IDs — Bilibili video URLs (https://www.bilibili.com/video/BV…) or BV ids, one per line. Example: []."
+          "description": "Video URLs or IDs — Bilibili video URLs (https://www.bilibili.com/video/BV…) or BV ids, one per line. Example: [].",
+          "minItems": 1
         },
         "popular": {
           "type": "boolean",
@@ -1293,7 +1341,29 @@
           "description": "Max videos — Maximum videos per keyword (and for popular)."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "searchKeywords"
+          ]
+        },
+        {
+          "required": [
+            "keywords"
+          ]
+        },
+        {
+          "required": [
+            "videoUrls"
+          ]
+        },
+        {
+          "required": [
+            "popular"
+          ]
+        }
+      ]
     },
     "arrayFields": [
       "keywords",
@@ -1312,7 +1382,8 @@
       "properties": {
         "keywords": {
           "type": "string",
-          "description": "Keywords — What to search for, several keywords separated by `;` (e.g. `python; product management; hiking`). Leave empty to get all upcoming events in the location. Example: \"python\"."
+          "description": "Keywords — What to search for, several keywords separated by `;` (e.g. `python; product management; hiking`). Leave empty to get all upcoming events in the location. Example: \"python\".",
+          "minLength": 1
         },
         "location": {
           "type": "string",
@@ -1333,7 +1404,8 @@
           "items": {
             "type": "string"
           },
-          "description": "Meetup search URLs — Optional: meetup.com/find/ URLs copied from your browser (keywords, location and event type are read from them)."
+          "description": "Meetup search URLs — Optional: meetup.com/find/ URLs copied from your browser (keywords, location and event type are read from them).",
+          "minItems": 1
         },
         "maxEvents": {
           "type": "integer",
@@ -1343,7 +1415,19 @@
           "description": "Max events per search — Maximum events for each keyword × location."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "anyOf": [
+        {
+          "required": [
+            "keywords"
+          ]
+        },
+        {
+          "required": [
+            "searchUrls"
+          ]
+        }
+      ]
     },
     "arrayFields": [
       "searchUrls"

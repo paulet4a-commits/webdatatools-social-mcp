@@ -1,0 +1,1336 @@
+{
+  "manifest_version": "0.3",
+  "name": "webdatatools-social-mcp",
+  "display_name": "WebDataTools Search, video & social data",
+  "version": "0.1.0",
+  "description": "Search, video & social data tools for AI agents over MCP, backed by WebDataTools' Apify Actors. Uses your own Apify API token — billed to you, not us.",
+  "long_description": "23 search, video & social data tools. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.\n\nEvery tool call runs a WebDataTools Actor on your own Apify account (get a free token with monthly free credit at https://console.apify.com/settings/integrations), so usage is billed to you, never to the server author. The price per result is in each tool description.",
+  "author": {
+    "name": "WebDataTools",
+    "url": "https://apify.com/webdatatools"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/paulet4a-commits/webdatatools-social-mcp"
+  },
+  "homepage": "https://apify.com/webdatatools",
+  "support": "https://github.com/paulet4a-commits/webdatatools-social-mcp/issues",
+  "license": "MIT",
+  "keywords": [
+    "mcp",
+    "mcp-server",
+    "model-context-protocol",
+    "apify",
+    "ai-agent",
+    "youtube",
+    "google-search",
+    "serp",
+    "bluesky",
+    "telegram",
+    "substack",
+    "podcasts",
+    "social-media"
+  ],
+  "server": {
+    "type": "node",
+    "entry_point": "bin/cli.js",
+    "mcp_config": {
+      "command": "node",
+      "args": [
+        "${__dirname}/bin/cli.js"
+      ],
+      "env": {
+        "APIFY_TOKEN": "${user_config.apify_token}"
+      }
+    }
+  },
+  "compatibility": {
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
+    "runtimes": {
+      "node": ">=18.0.0"
+    }
+  },
+  "user_config": {
+    "apify_token": {
+      "type": "string",
+      "title": "Apify API token",
+      "description": "Your personal Apify API token. Get a free one (with monthly free credit) at https://console.apify.com/settings/integrations. Every tool call is billed to this account, never to the server author.",
+      "sensitive": true,
+      "required": true
+    }
+  },
+  "tools": [
+    {
+      "name": "youtube_shorts_scraper",
+      "description": "YouTube Shorts Scraper collects Shorts from channels, #hashtag feeds and Shorts search: video ID, URL, title, view count, channel name and @handle, thumbnail, and with details the exact publish date, description and hashtags. No API key or quota. Billed to your own Apify account: ~$0.003 per short (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Channels — YouTube channels to scrape Shorts from. Accepts a channel ID (UCX6OQ3DkcsbYNE6H8uQQuVA), a handle with or without @ (@MrBeast), or a channel URL, e.g. https://www.youtube.com/@MrBeast. Alias: 'channel', 'channelUrl', 'url', 'urls'. Example: [\"@MrBeast\"].",
+            "minItems": 1
+          },
+          "hashtags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Hashtags — YouTube hashtags to scrape Shorts from, e.g. 'cooking' or 'iphone tips'. Do not include the # symbol. Example: ['cooking', 'dance']. Example: [].",
+            "minItems": 1
+          },
+          "searchQueries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Search queries — YouTube search terms filtered to Shorts only, e.g. 'iphone tips' or 'cooking hacks'. Example: ['iphone tips', 'cooking']. Example: [].",
+            "minItems": 1
+          },
+          "maxShortsPerSource": {
+            "type": "integer",
+            "default": 30,
+            "minimum": 1,
+            "maximum": 500,
+            "description": "Max Shorts per source — Maximum number of Shorts to return per channel, hashtag or search query, e.g. 30. Default 30, maximum 500."
+          },
+          "includeDetails": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include details — Also fetch each Short's description, length in seconds, tags, exact view count, channel name and @handle, and exact publish date (two extra ~9 KB requests per Short). Off = faster, card data only."
+          },
+          "publishedAfter": {
+            "type": "string",
+            "description": "Published after — Optional. Keep only Shorts published on or after this date, ISO format, e.g. 2026-10-01. Older Shorts are dropped before they are returned, so they are not charged. Adds one request per Short to read the publish date; Shorts whose date YouTube does not return are kept."
+          }
+        },
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "channels"
+            ]
+          },
+          {
+            "required": [
+              "hashtags"
+            ]
+          },
+          {
+            "required": [
+              "searchQueries"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "pinterest_pins_scraper",
+      "description": "Pinterest Pins Scraper extracts the latest pins from public Pinterest profiles and boards. Get up to 25 recent pins per profile or board from Pinterest's public RSS feeds, no login required. Billed to your own Apify account: ~$0.0022 per pin (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "profiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Profiles — Enter Pinterest usernames or profile URLs to scrape the latest pins from, e.g. \"nasa\" or https://www.pinterest.com/nasa/. Each profile returns up to 25 pins (Pinterest's public RSS feed caps at 25). Example: [\"nasa\"].",
+            "minItems": 1
+          },
+          "boards": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Boards — Enter Pinterest board URLs to scrape the latest pins from, e.g. https://www.pinterest.com/nasa/space-exploration/. Each board returns up to 25 pins (Pinterest's public RSS feed caps at 25). Example: [].",
+            "minItems": 1
+          },
+          "maxPinsPerSource": {
+            "type": "integer",
+            "default": 25,
+            "minimum": 1,
+            "maximum": 25,
+            "description": "Max pins per source — Enter the maximum number of pins to return per profile or board, e.g. 25. Pinterest's public RSS feed only ever returns the latest 25 pins, so this cannot go above 25."
+          }
+        },
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "profiles"
+            ]
+          },
+          {
+            "required": [
+              "boards"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "youtube_transcript_scraper",
+      "description": "1 result = the full transcript of 1 video, $0.004/video (FREE). YouTube captions with timestamped segments, publish date, view count and a completeness check. Multiple languages and auto-generated captions. Billed to your own Apify account: ~$0.004 per video (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "videoUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Video URLs or IDs — Enter YouTube video URLs or IDs to extract transcripts from. Accepts full URLs (https://www.youtube.com/watch?v=dQw4w9WgXcQ), shorts URLs, youtu.be links, or bare IDs. Leave empty if using channelUrl instead. Example: [\"https://www.youtube.com/watch?v=dQw4w9WgXcQ\"].",
+            "minItems": 1
+          },
+          "channelUrl": {
+            "type": "string",
+            "description": "Channel URL (optional) — Alternatively, provide a YouTube channel URL to extract transcripts from its latest videos. If provided, this overrides the Video URLs field.",
+            "minLength": 1
+          },
+          "maxVideos": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 1,
+            "maximum": 500,
+            "description": "Max videos — Maximum number of videos to extract transcripts from (when using channel URL). Default: 10."
+          },
+          "language": {
+            "type": "string",
+            "default": "en",
+            "description": "Preferred language — Two-letter language code (e.g., 'en' for English, 'de' for German). The Actor will prefer captions in this language. Default: en."
+          },
+          "includeAutoGenerated": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include auto-generated captions — Whether to include auto-generated captions when manual captions are not available. Default: true."
+          },
+          "includeSegments": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include segments with timestamps — Whether to include segment-level data with timestamps and durations. If false, only the full transcript text is returned. Default: true."
+          }
+        },
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "videoUrls"
+            ]
+          },
+          {
+            "required": [
+              "channelUrl"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "google_search_scraper",
+      "description": "Google Search Results Scraper returns organic results (title, real URL, snippet, position) for any query through the Apify GOOGLE_SERP proxy — one row per SERP page, and each row is one billed result. Billed to your own Apify account: ~$0.005 per result (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "queries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Search queries — Enter the Google search queries to scrape, e.g. apify web scraping. One dataset row is returned per query per result page (each row is one billed SERP page). Rows are saved as they finish; if the run timeout is near, the Actor stops early and still ends SUCCEEDED with the pages done so far. Example: [\"apify web scraping\"].",
+            "minItems": 1
+          },
+          "countryCode": {
+            "type": "string",
+            "default": "us",
+            "description": "Country code (gl) — Enter the 2-letter country code Google should localise results for, e.g. us, gb, de. Sent as the gl parameter."
+          },
+          "languageCode": {
+            "type": "string",
+            "default": "en",
+            "description": "Language code (hl) — Enter the 2-letter interface language code, e.g. en, es, fr. Sent as the hl parameter and affects snippet language."
+          },
+          "resultsPerPage": {
+            "type": "integer",
+            "default": 10,
+            "minimum": 10,
+            "maximum": 100,
+            "description": "Results per page — Sent to Google as num, e.g. 10. Google currently ignores it and returns about 10 organic results per page (a 9 Oct 2026 test with 100 gave 9), so use Max pages per query to get more results."
+          },
+          "maxPagesPerQuery": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "maximum": 10,
+            "description": "Max pages per query — Enter how many result pages to fetch per query, e.g. 1. Each extra page is the next ~10 results (start=10, 20, …) and a separate billed SERP page. Total pages = queries x this value; when choosing the run timeout, allow about 2 s per page divided by Max concurrency."
+          },
+          "dateRange": {
+            "type": "string",
+            "enum": [
+              "hour",
+              "day",
+              "week",
+              "month",
+              "year"
+            ],
+            "description": "Date range — Optional. Only results from the past hour, day, week, month or year (Google's Tools > Any time filter, sent as tbs=qdr:). Options: hour = Past hour; day = Past 24 hours; week = Past week; month = Past month; year = Past year."
+          },
+          "site": {
+            "type": "string",
+            "description": "Only this site — Optional. Restrict every query to one domain or TLD, e.g. reddit.com or gov — adds site: to each query."
+          },
+          "fileType": {
+            "type": "string",
+            "description": "File type — Optional. Only documents of this type, e.g. pdf, docx, xlsx — adds filetype: to each query."
+          },
+          "exactPhrase": {
+            "type": "string",
+            "description": "Exact phrase — Optional. A phrase every result must contain word for word — added to each query in quotes."
+          },
+          "device": {
+            "type": "string",
+            "enum": [
+              "desktop",
+              "mobile"
+            ],
+            "default": "desktop",
+            "description": "Device — Choose desktop or mobile to control which User-Agent is sent — Google sometimes shows slightly different snippets/layout per device. Options: desktop = Desktop; mobile = Mobile."
+          },
+          "includePeopleAlsoAsk": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include People Also Ask — Leave on to parse the People Also Ask box. The basic-HTML Google page this Actor fetches (for real result URLs) rarely contains it, so peopleAlsoAsk is usually empty; it is filled whenever Google does render the box. Does not change the price."
+          },
+          "includeRelatedSearches": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include related searches — Leave on to parse the related-searches suggestions. Like People Also Ask, Google's basic-HTML page rarely includes them, so expect relatedSearches to be empty on most pages. Does not change the price."
+          },
+          "safeSearch": {
+            "type": "boolean",
+            "default": false,
+            "description": "SafeSearch — Turn this on to request Google's SafeSearch filtering (adds safe=active to the request)."
+          },
+          "debugHtml": {
+            "type": "boolean",
+            "default": false,
+            "description": "Save raw page HTML (debug) — Turn on only when reporting a parsing problem: saves every fetched Google page as PAGE_<n>.html in the run's key-value store. Does not change the price or the results."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "queries"
+        ]
+      }
+    },
+    {
+      "name": "youtube_comments_scraper",
+      "description": "Comments Scraper extracts comments, replies, likes and author details from any YouTube video URL or ID — no YouTube Data API key or quota needed. Billed to your own Apify account: ~$0.0005 per result (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "videos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Videos — Enter YouTube video IDs or URLs, one row is returned per comment. Accepts a bare ID (dQw4w9WgXcQ), a watch URL, a shorts URL, or a youtu.be link, e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ. Example: [\"dQw4w9WgXcQ\"].",
+            "minItems": 1
+          },
+          "maxCommentsPerVideo": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 10000,
+            "description": "Max comments per video — Enter the maximum number of comment rows to return per video, e.g. 100. Replies count toward this cap when 'Include replies' is on. Raise this for deep sentiment analysis, lower it to sample large channels cheaply."
+          },
+          "includeReplies": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include replies — Keep this off to fetch only top-level comments (fastest, cheapest). Turn it on to also fetch replies to each comment thread — every reply needs one extra request, so runs take longer and replies count toward the per-video cap above."
+          },
+          "sortBy": {
+            "type": "string",
+            "enum": [
+              "top",
+              "newest"
+            ],
+            "default": "top",
+            "description": "Sort comments by — Choose 'top' for YouTube's featured/most-relevant comments first, or 'newest' to get the most recently posted comments first — useful for monitoring what people are saying about a video right now. Options: top = Top comments; newest = Newest first."
+          },
+          "language": {
+            "type": "string",
+            "default": "en",
+            "description": "Language — Enter a 2-letter language code YouTube should localize its UI text to, e.g. en. This affects labels like relative-time text ('2 days ago'), not the comments themselves."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "videos"
+        ]
+      }
+    },
+    {
+      "name": "youtube_channel_videos",
+      "description": "YouTube channel latest videos scraper: give it a channel ID, @handle or channel URL and get the newest uploads with title, URL, views, likes, description and thumbnail — one row per video, no API key. Billed to your own Apify account: ~$0.001 per result (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "YouTube channels — Enter the YouTube channels to read, one row is returned per video. Every form works: a channel ID (UCX6OQ3DkcsbYNE6H8uQQuVA), a handle (@MrBeast), or a channel URL (https://www.youtube.com/@apify, /channel/UC..., /c/Name, /user/Name). Channel IDs are read directly; handles and URLs cost one extra request to look the ID up, so paste UC... IDs when you have them. Example: [\"UCX6OQ3DkcsbYNE6H8uQQuVA\"].",
+            "minItems": 1
+          },
+          "maxVideosPerChannel": {
+            "type": "integer",
+            "default": 15,
+            "minimum": 1,
+            "maximum": 15,
+            "description": "Max videos per channel — Enter how many of the newest videos to return per channel, e.g. 15. YouTube's public RSS feed only ever contains the latest 15 uploads, so 15 is both the default and the maximum — there is no way to page further back without the official Data API."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "channels"
+        ]
+      }
+    },
+    {
+      "name": "youtube_channel_scraper",
+      "description": "YouTube Channel Scraper extracts videos, Shorts or livestreams from any YouTube channel — title, views, duration, publish time and thumbnail — no API key or quota needed. Billed to your own Apify account: ~$0.0005 per video (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Channels — Enter YouTube channels to scrape, one row is returned per video. Accepts a channel ID (UCX6OQ3DkcsbYNE6H8uQQuVA), a handle with or without @ (@MrBeast), or a channel/c/user URL, e.g. https://www.youtube.com/@MrBeast. Example: [\"@apify\"].",
+            "minItems": 1
+          },
+          "tab": {
+            "type": "string",
+            "enum": [
+              "videos",
+              "shorts",
+              "streams"
+            ],
+            "default": "videos",
+            "description": "Tab — Choose which channel tab to read: 'videos' for regular uploads, 'shorts' for Shorts, or 'streams' for the Live tab (past and current livestreams). A channel without that tab returns an error row for it. Options: videos = Videos; shorts = Shorts; streams = Live."
+          },
+          "sortBy": {
+            "type": "string",
+            "enum": [
+              "newest",
+              "popular"
+            ],
+            "default": "newest",
+            "description": "Sort by — Choose 'newest' for the channel's default upload order, or 'popular' to sort by view count using the channel's own 'Popular' filter. Popular sort only applies to the Videos and Live tabs; Shorts always returns newest first, and any channel without a Popular filter falls back to newest automatically. Options: newest = Newest first; popular = Most popular."
+          },
+          "maxVideosPerChannel": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 5000,
+            "description": "Max videos per channel — Enter the maximum number of video rows to return per channel, e.g. 100. The scraper pages through the channel's grid one request per ~30 videos until this cap is reached or the channel runs out of videos."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "channels"
+        ]
+      }
+    },
+    {
+      "name": "youtube_search_scraper",
+      "description": "YouTube Search Results Scraper returns videos, channels or playlists for any keyword, with title, views, duration, channel and publish time — no API key, no quota. Billed to your own Apify account: ~$0.0005 per result (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "queries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Search queries — Enter the search terms to run on YouTube, one row is returned per result, e.g. web scraping tutorial. One dataset row is produced per matching video, channel or playlist. Example: [\"web scraping tutorial\"].",
+            "minItems": 1
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "all",
+              "video",
+              "channel",
+              "playlist"
+            ],
+            "default": "video",
+            "description": "Result type — Choose what kind of result to return: all mixes videos, channels and playlists; video/channel/playlist restrict the search server-side to one kind (verified live against YouTube's search endpoint). Options: all = All (videos, channels, playlists); video = Videos only; channel = Channels only; playlist = Playlists only."
+          },
+          "uploadDate": {
+            "type": "string",
+            "enum": [
+              "any",
+              "hour",
+              "today",
+              "week",
+              "month",
+              "year"
+            ],
+            "default": "any",
+            "description": "Upload date — Only return videos uploaded within this window, e.g. week for the last 7 days. Verified live against YouTube's own upload-date filter. Ignored when Result type is channel or playlist. Options: any = Any time; hour = Last hour; today = Today; week = This week; month = This month; year = This year."
+          },
+          "sortBy": {
+            "type": "string",
+            "enum": [
+              "relevance",
+              "date",
+              "views",
+              "rating"
+            ],
+            "default": "relevance",
+            "description": "Sort by — How to order results. relevance (default) and views are applied by YouTube's server and verified live (views produces a clean view-count-descending order). date and rating could not be verified server-side during testing — for those two the Actor instead re-sorts the page(s) it already fetched by parsed publish time client-side, which is a best-effort approximation, not a true site-wide sort; see the README. Options: relevance = Relevance (default); date = Upload date (best-effort, client-side); views = View count (verified server-side); rating = Rating (best-effort, unreliable — YouTube hides ratings)."
+          },
+          "duration": {
+            "type": "string",
+            "enum": [
+              "any",
+              "short",
+              "medium",
+              "long"
+            ],
+            "default": "any",
+            "description": "Duration — Only return videos of this length: short is under 4 minutes, medium is 4-20 minutes, long is over 20 minutes. Verified live against YouTube's own duration filter. Ignored when Result type is channel or playlist. Options: any = Any length; short = Short (< 4 min); medium = Medium (4-20 min); long = Long (> 20 min)."
+          },
+          "maxResultsPerQuery": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Max results per query — Enter how many results to return per search query, e.g. 50. The Actor pages through YouTube's search continuations until it reaches this number or YouTube runs out of results."
+          },
+          "language": {
+            "type": "string",
+            "default": "en",
+            "description": "Interface language — Language code sent to YouTube as hl, e.g. en. Affects relative time text (\"2 days ago\") and UI strings the parser reads."
+          },
+          "region": {
+            "type": "string",
+            "default": "US",
+            "description": "Region — Country code sent to YouTube as gl, e.g. US. Affects which results and trending content YouTube considers local."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "queries"
+        ]
+      }
+    },
+    {
+      "name": "youtube_video_details",
+      "description": "YouTube Video Details Scraper returns views, likes, description, tags, category, channel and comment count for any YouTube video URL or ID — no YouTube Data API key or quota needed. Billed to your own Apify account: ~$0.001 per video (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "videos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Videos — Enter YouTube video IDs or URLs, one row is returned per video. Accepts a bare ID (dQw4w9WgXcQ), a watch URL, a shorts URL, or a youtu.be link, e.g. https://www.youtube.com/watch?v=dQw4w9WgXcQ. Example: [\"dQw4w9WgXcQ\"].",
+            "minItems": 1
+          },
+          "language": {
+            "type": "string",
+            "default": "en",
+            "description": "Language — Enter a 2-letter language code YouTube should localize its UI text to, e.g. en. This affects labels like the category name and relative date text, not the video's own title or description."
+          },
+          "region": {
+            "type": "string",
+            "default": "US",
+            "description": "Region — Enter a 2-letter country code for YouTube to use when resolving region-specific details, e.g. US."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "videos"
+        ]
+      }
+    },
+    {
+      "name": "podcast_lookup",
+      "description": "Apple Podcasts lookup by id, URL, RSS feed or search term — podcast metadata (artwork, genres, episode count) plus the full episode list from the show's own RSS feed, one row per podcast or episode. Billed to your own Apify account: ~$0.001 per episode (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "podcasts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Podcasts — Enter one podcast per row: an Apple Podcasts id (1200361736), an Apple Podcasts URL (https://podcasts.apple.com/us/podcast/the-daily/id1200361736), an RSS feed URL (https://feeds.simplecast.com/Sl5CSM3S), or a search term prefixed with search: (search:true crime, which returns up to searchLimit podcasts). Example: [\"1200361736\"].",
+            "minItems": 1
+          },
+          "country": {
+            "type": "string",
+            "default": "us",
+            "pattern": "^[A-Za-z]{2}$",
+            "description": "Storefront country — Enter the two-letter country code of the Apple Podcasts storefront to search and look up ids in, e.g. us, gb, de. Only affects the iTunes lookup/search step — an RSS feed URL entry ignores this."
+          },
+          "searchLimit": {
+            "type": "integer",
+            "default": 25,
+            "minimum": 1,
+            "maximum": 200,
+            "description": "Results per search term — Enter how many podcasts each search: term should return, e.g. 25. Only affects rows starting with search: — an id, URL or feed entry always resolves to exactly one podcast."
+          },
+          "includeEpisodes": {
+            "type": "boolean",
+            "default": true,
+            "description": "Fetch episodes from RSS — Keep this on to fetch each podcast's own RSS feed (via its feedUrl) and read its language, full description and website — and, in episodes output mode, its episode list. Turning this off skips the RSS request entirely and leaves those fields null."
+          },
+          "maxEpisodes": {
+            "type": "integer",
+            "default": 20,
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Max episodes per podcast — Enter how many of the most recent episodes to read from each podcast's RSS feed, e.g. 20. Only used when includeEpisodes is on and outputMode is episodes."
+          },
+          "outputMode": {
+            "type": "string",
+            "enum": [
+              "podcasts",
+              "episodes"
+            ],
+            "default": "episodes",
+            "description": "Output mode — Choose podcasts for one row per podcast (metadata only), or episodes for one row per episode (podcast metadata repeated on every episode row). Choosing episodes automatically fetches the RSS feed even if includeEpisodes is off. Options: podcasts = One row per podcast; episodes = One row per episode."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "podcasts"
+        ]
+      }
+    },
+    {
+      "name": "bluesky_scraper",
+      "description": "Bluesky Post, Search & Profile Scraper returns post text, engagement counts, images, profile bios, followers, follows and thread replies from Bluesky's public API — one row per item, no login required. Billed to your own Apify account: ~$0.0005 per post (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "posts",
+              "search",
+              "profile",
+              "followers",
+              "follows",
+              "thread"
+            ],
+            "description": "Mode — Choose what to scrape. \"posts\" reads a user's own posts, \"search\" finds posts matching a query (requires an app password below — Bluesky's public search API needs a signed-in session), \"profile\"/\"followers\"/\"follows\" read account data, and \"thread\" reads one post and its replies. Options: posts = User's posts; search = Search posts; profile = Profile; followers = Followers; follows = Follows; thread = Thread. Example: \"posts\".",
+            "minLength": 1
+          },
+          "handles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Handles, DIDs or profile URLs — Enter one or more Bluesky handles, DIDs or bsky.app profile URLs, e.g. bsky.app, did:plc:z72i7hdynmk6r22z27h6tvur or https://bsky.app/profile/jay.bsky.team. Used by the \"posts\", \"profile\", \"followers\" and \"follows\" modes. Example: [\"bsky.app\"].",
+            "minItems": 1
+          },
+          "postUrl": {
+            "type": "string",
+            "description": "Post URL — Enter one post's bsky.app URL (e.g. https://bsky.app/profile/bsky.app/post/3l6oveex3ii2l) or its at:// URI. Used by the \"thread\" mode only, to fetch that post and its replies. Example: \"https://bsky.app/profile/bsky.app/post/3l6oveex3ii2l\".",
+            "minLength": 1
+          },
+          "maxItems": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 5000,
+            "description": "Max items — Enter the maximum number of rows to return per handle or per search query, e.g. 100. Raise this for bulk exports; lower it to keep runs quick."
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "latest",
+              "top"
+            ],
+            "default": "latest",
+            "description": "Sort order — Choose how search results are ordered: \"latest\" (newest first) or \"top\" (most engagement first). Used by the \"search\" mode only. Options: latest = Latest; top = Top."
+          },
+          "since": {
+            "type": "string",
+            "default": "",
+            "description": "Since (ISO date) — Enter an ISO 8601 date/time to only return posts created on or after it, e.g. 2026-01-01. Leave blank for no lower bound. Used by the \"search\" mode only."
+          },
+          "until": {
+            "type": "string",
+            "default": "",
+            "description": "Until (ISO date) — Enter an ISO 8601 date/time to only return posts created before it, e.g. 2026-06-01. Leave blank for no upper bound. Used by the \"search\" mode only."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "mode"
+        ],
+        "anyOf": [
+          {
+            "required": [
+              "handles"
+            ]
+          },
+          {
+            "required": [
+              "postUrl"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "x_tweet_scraper",
+      "description": "Get full details of X (Twitter) posts from their URLs or ids: text, date, likes, replies, author, verification, hashtags, mentions, links, photos, videos (MP4), link cards, quotes and replies. No login, cookies or API key. Billed to your own Apify account: ~$0.0005 per tweet (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "tweets": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Tweets — Tweet URLs (`https://x.com/NASA/status/…`, twitter.com links work too) or plain tweet ids. Example: [\"https://x.com/jack/status/20\"].",
+            "minItems": 1
+          },
+          "language": {
+            "type": "string",
+            "default": "en",
+            "description": "Language — Language code X uses for translated labels, e.g. `en`, `de`, `tr`. Tweet text is never translated."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "tweets"
+        ]
+      }
+    },
+    {
+      "name": "tiktok_profile_scraper",
+      "description": "Get public TikTok profile data in bulk: exact follower, following, like and video counts, bio and bio link, verified, private and business flags, avatar and join date. Add video URLs for views, likes, comments, shares, saves, hashtags and music. No login. Billed to your own Apify account: ~$0.001 per profile (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "profiles": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Profiles — TikTok usernames or profile URLs, e.g. `nasa`, `@khaby.lame`, `https://www.tiktok.com/@charlidamelio`. Example: [\"nasa\"].",
+            "minItems": 1
+          },
+          "videos": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Videos — Optional: TikTok video URLs (`https://www.tiktok.com/@user/video/…`) for their views, likes, comments, shares and saves.",
+            "minItems": 1
+          }
+        },
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "profiles"
+            ]
+          },
+          {
+            "required": [
+              "videos"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "telegram_channel_scraper",
+      "description": "Scrapes public Telegram channels via the t.me/s/ web preview — post text, view counts, media flags, forwards, replies and links, one row per post, no API key or login required. Billed to your own Apify account: ~$0.0005 per Post (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "channels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Channels — Enter one public Telegram channel per row: a bare handle (telegram), an @handle (@telegram) or a t.me URL (https://t.me/telegram). The channel must have public content preview enabled at t.me/s/<handle> — private channels and groups are not supported. Example: [\"@telegram\"].",
+            "minItems": 1
+          },
+          "maxPosts": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Max posts per channel — Enter how many of the most recent posts to fetch per channel, e.g. 50. The Actor pages through https://t.me/s/<channel>?before=<id> until this many posts are collected."
+          },
+          "includeText": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include post text — Keep this on to include each post's message text and the links found inside it. Turning it off leaves text and links empty, which is faster when you only need view counts and media flags."
+          },
+          "newestFirst": {
+            "type": "boolean",
+            "default": true,
+            "description": "Newest posts first — Keep this on to sort each channel's rows from newest to oldest post. Turn it off for oldest-first order."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "channels"
+        ]
+      }
+    },
+    {
+      "name": "substack_scraper",
+      "description": "Scrapes any Substack publication's own public JSON archive API — title, author, publish date, paywall status, word count, likes and comments per post, one row per post, with an RSS fallback and optional full article text. Billed to your own Apify account: ~$0.0005 per Post (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "publications": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Publications — Enter one Substack publication per row: a subdomain handle (bariweiss), a full subdomain (bariweiss.substack.com), or any post/publication URL on a custom domain (https://www.thefp.com or https://www.thefp.com/p/some-post). Example: [\"bariweiss\"].",
+            "minItems": 1
+          },
+          "maxPosts": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Max posts per publication — Enter how many of the most recent posts to fetch per publication, e.g. 50. The Actor pages through the publication's own archive API in batches of 50 until this many posts are collected."
+          },
+          "includeBody": {
+            "type": "boolean",
+            "default": false,
+            "description": "Include full article text — Keep this off for metadata only (fast). Turn it on to also fetch each post's own page and extract its full article text into bodyText — one extra request per post."
+          },
+          "freeOnly": {
+            "type": "boolean",
+            "default": false,
+            "description": "Free posts only — Keep this on to skip posts marked paywalled/subscriber-only (isPaywalled) and only return posts anyone can read."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "publications"
+        ]
+      }
+    },
+    {
+      "name": "google_play_reviews_scraper",
+      "description": "Extract reviews, ratings, replies, and app versions from Google Play Store apps by package ID or URL. Billed to your own Apify account: ~$0.0002 per review (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "appIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "App IDs or URLs — Enter Google Play Store app package IDs (e.g. com.whatsapp) or Play Store URLs (e.g. https://play.google.com/store/apps/details?id=com.whatsapp). One row per review is returned. Example: [\"com.whatsapp\"].",
+            "minItems": 1
+          },
+          "maxReviews": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 10000,
+            "description": "Max reviews per app — Maximum number of reviews to fetch per app, e.g. 100. Google returns at most a few thousand reviews per sort order."
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "newest",
+              "relevant",
+              "rating"
+            ],
+            "default": "newest",
+            "description": "Sort order — How to order reviews: newest (default), relevant (most helpful), or rating (highest rated first). Options: newest = Newest; relevant = Most relevant; rating = Highest rated."
+          },
+          "ratings": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "1",
+                "2",
+                "3",
+                "4",
+                "5"
+              ]
+            },
+            "default": [],
+            "description": "Filter by star rating — Return only reviews with these star ratings (1-5). Leave empty to include all ratings, e.g. [1, 2] for only 1-2 star reviews."
+          },
+          "lang": {
+            "type": "string",
+            "default": "en",
+            "minLength": 2,
+            "maxLength": 5,
+            "description": "Language — 2-letter language code for review text and metadata, e.g. en, es, de. Defaults to en."
+          },
+          "country": {
+            "type": "string",
+            "default": "us",
+            "minLength": 2,
+            "maxLength": 2,
+            "description": "Country — 2-letter country code for the Play Store region, e.g. us, gb, de. Defaults to us."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "appIds"
+        ]
+      }
+    },
+    {
+      "name": "app_store_reviews_scraper",
+      "description": "App Store Reviews Scraper returns customer reviews from Apple's App Store by app ID. Scrape up to 500 reviews per app per country from the public RSS feed. Billed to your own Apify account: ~$0.0001 per review (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "appIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "description": "App IDs — Enter the app IDs to scrape reviews from. Use the numeric app ID, e.g. 284882215, or an App Store URL, e.g. https://apps.apple.com/us/app/facebook/id284882215. Example: [\"284882215\"]."
+          },
+          "countries": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "us"
+            ],
+            "description": "Countries — Enter the list of 2-letter country codes to scrape reviews from, e.g. [\"us\", \"gb\", \"de\"]. Each country is limited to 500 reviews maximum. More countries = more reviews from different regions."
+          },
+          "maxReviews": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 500,
+            "description": "Max reviews per country — Enter the maximum number of reviews to fetch per app per country, e.g. 100. Maximum 500 per country (Apple's RSS limit)."
+          },
+          "ratings": {
+            "type": "array",
+            "items": {},
+            "default": [],
+            "description": "Filter by star rating — Optionally filter reviews by star rating. Leave empty to include all ratings. Enter as a JSON array, e.g. [1, 5] to get only 1-star and 5-star reviews."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "appIds"
+        ]
+      }
+    },
+    {
+      "name": "trustpilot_reviews_scraper",
+      "description": "Scrape Trustpilot reviews for any company: star rating, title, full text, language, dates, verification, reviewer country and the company’s reply, plus TrustScore and review count. Real browser, no login or cookies needed. Billed to your own Apify account: ~$0.001 per review (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "companies": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Companies — Company websites or Trustpilot review page URLs, e.g. `nordvpn.com` or `https://www.trustpilot.com/review/www.revolut.com`. Example: [\"www.nordvpn.com\"].",
+            "minItems": 1
+          },
+          "maxReviewsPerCompany": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 5000,
+            "description": "Max reviews per company — Newest first. Past 200, the Actor splits the request by language and star rating (see README)."
+          },
+          "stars": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "5",
+                "4",
+                "3",
+                "2",
+                "1"
+              ],
+              "enumTitles": [
+                "5 stars",
+                "4 stars",
+                "3 stars",
+                "2 stars",
+                "1 star"
+              ]
+            },
+            "description": "Star ratings — Only these ratings. Leave empty for all. Options: 5 = 5 stars; 4 = 4 stars; 3 = 3 stars; 2 = 2 stars; 1 = 1 star."
+          },
+          "languages": {
+            "type": "string",
+            "default": "all",
+            "description": "Languages — `all` (default) or ISO codes separated by `,`, e.g. `en,de,fr`."
+          },
+          "date": {
+            "type": "string",
+            "enum": [
+              "any",
+              "last30days",
+              "last3months",
+              "last6months",
+              "last12months"
+            ],
+            "default": "any",
+            "description": "Published within — Only reviews from this period. Options: any = Any time; last30days = Last 30 days; last3months = Last 3 months; last6months = Last 6 months; last12months = Last 12 months."
+          },
+          "verifiedOnly": {
+            "type": "boolean",
+            "default": false,
+            "description": "Verified reviews only — Only reviews Trustpilot marks as verified."
+          },
+          "withRepliesOnly": {
+            "type": "boolean",
+            "default": false,
+            "description": "With company reply only — Only reviews the company answered."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "companies"
+        ]
+      }
+    },
+    {
+      "name": "google_trends_scraper",
+      "description": "Google Trends Scraper extracts search interest data from Google Trends by keyword, including interest over time, regional interest, and related search queries. Billed to your own Apify account: ~$0.0025 per keyword (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1,
+            "maxItems": 100,
+            "description": "Keywords — Enter the keywords to scrape Google Trends data for, e.g. [\"coffee\", \"tea\"]. Maximum 100 keywords. Example: [\"coffee\"]."
+          },
+          "geo": {
+            "type": "string",
+            "default": "",
+            "description": "Geographic location — Enter the 2-letter country code, e.g. US, GB, DE. Leave empty for worldwide data."
+          },
+          "timeframe": {
+            "type": "string",
+            "enum": [
+              "now 1-d",
+              "now 7-d",
+              "today 1-m",
+              "today 3-m",
+              "today 12-m",
+              "today 5-y",
+              "all"
+            ],
+            "default": "today 12-m",
+            "description": "Timeframe — Select the time period for interest data. Options: now 1-d = Past 1 day; now 7-d = Past 7 days; today 1-m = Past month; today 3-m = Past 3 months; today 12-m = Past 12 months; today 5-y = Past 5 years; all = All time."
+          },
+          "category": {
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "description": "Category — Enter the Google Trends category ID, e.g. 0 for all categories. Most common: 0 (all), 20 (news), 101 (business)."
+          },
+          "includeRegions": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include regional breakdown — Include interest by region/state in the output."
+          },
+          "includeRelatedQueries": {
+            "type": "boolean",
+            "default": true,
+            "description": "Include related queries — Include top and rising related search queries in the output."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "keywords"
+        ]
+      }
+    },
+    {
+      "name": "google_ads_transparency_scraper",
+      "description": "Google Ads Transparency Scraper extracts ad creatives from Google's Ad Transparency Center. Search by advertiser domain, advertiser ID, or name, filter by region and date range, and retrieve creative details including text, images, video previews, and show/hide dates. Billed to your own Apify account: ~$0.001 per ad (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "advertisers": {
+            "type": "string",
+            "description": "Advertisers — Enter advertiser domains (e.g., nike.com), advertiser IDs (e.g., AR123456789), or advertiser names (e.g., Nike), separated by semicolons. Example: \"nike.com; shopify.com\" Example: \"nike.com\".",
+            "minLength": 1
+          },
+          "domain": {
+            "type": "string",
+            "description": "Advertiser domain (alias) — Alias for 'advertisers'. Enter a single domain (e.g., nike.com). Use 'advertisers' for multiple values.",
+            "minLength": 1
+          },
+          "advertiser": {
+            "type": "string",
+            "description": "Advertiser (alias) — Alias for 'advertisers'. Enter a single advertiser domain, ID, or name.",
+            "minLength": 1
+          },
+          "region": {
+            "type": "string",
+            "description": "Region — Enter a region code (e.g., US, GB, DE) to filter ads by region. Leave empty to include all regions. Example: \"US\"."
+          },
+          "dateFrom": {
+            "type": "string",
+            "description": "Date from — Optional start date for ad range (ISO 8601 format, e.g., 2024-01-01). Leave empty for no filter."
+          },
+          "dateTo": {
+            "type": "string",
+            "description": "Date to — Optional end date for ad range (ISO 8601 format, e.g., 2024-12-31). Leave empty for no filter."
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "all",
+              "text",
+              "image",
+              "video"
+            ],
+            "default": "all",
+            "description": "Ad format — Filter by ad format: all, text, image, or video."
+          },
+          "maxAds": {
+            "type": "integer",
+            "default": 40,
+            "minimum": 1,
+            "maximum": 100,
+            "description": "Max ads per advertiser — Maximum number of ads to retrieve per advertiser (default 40, max 100). API limit is 100 results per query."
+          }
+        },
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "advertisers"
+            ]
+          },
+          {
+            "required": [
+              "domain"
+            ]
+          },
+          {
+            "required": [
+              "advertiser"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "keyword_suggestions_scraper",
+      "description": "Scrape keyword suggestions from Google, YouTube, Amazon, and Bing search autocomplete APIs. Get related keywords, expansion options (A–Z alphabet, common questions), and multi-source deduplication. Billed to your own Apify account: ~$0.0005 per keyword (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "type": "string",
+            "description": "Keywords — Enter one or more keywords separated by semicolons, e.g. 'running shoes; standing desk'. Alias: keyword, query. Example: \"running shoes\".",
+            "minLength": 1
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [
+              "google"
+            ],
+            "description": "Sources — Which sources to query for suggestions: google, youtube, amazon, bing."
+          },
+          "language": {
+            "type": "string",
+            "default": "en",
+            "description": "Language — Language code, e.g. en, de, fr. Default: en"
+          },
+          "country": {
+            "type": "string",
+            "default": "US",
+            "description": "Country — Country code for locale, e.g. US, GB, DE. Default: US"
+          },
+          "expand": {
+            "type": "string",
+            "default": "none",
+            "description": "Expansion mode — Optional expansion: 'none' (default), 'alphabet' (A–Z), or 'questions' (who/what/why/how/when/where/can/is/etc)."
+          },
+          "maxDepth": {
+            "type": "integer",
+            "default": 1,
+            "minimum": 1,
+            "maximum": 2,
+            "description": "Max depth — How many levels to expand suggestions: 1 (default) or 2 (query suggestions themselves for more depth)."
+          },
+          "maxKeywords": {
+            "type": "integer",
+            "default": 200,
+            "minimum": 1,
+            "maximum": 10000,
+            "description": "Max keywords — Maximum keywords to extract per run. Default: 200."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "keywords"
+        ]
+      }
+    },
+    {
+      "name": "bilibili_scraper",
+      "description": "Scrape Bilibili (哔哩哔哩) videos by keyword, video URL or the popular list: title, uploader, category, views, likes, coins, favorites, danmaku, comments, duration, tags. No login. Billed to your own Apify account: ~$0.003 per video (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "searchKeywords": {
+            "type": "string",
+            "description": "Search keywords — Search Bilibili for videos, several keywords separated by `;` (e.g. `python; 原神; lofi`). Leave everything empty to get the currently popular videos. Example: \"python tutorial\".",
+            "minLength": 1
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Keywords (alias) — Same as Search keywords, as a list (merged with it). Example: [].",
+            "minItems": 1
+          },
+          "videoUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Video URLs or IDs — Bilibili video URLs (https://www.bilibili.com/video/BV…) or BV ids, one per line. Example: [].",
+            "minItems": 1
+          },
+          "popular": {
+            "type": "boolean",
+            "description": "Fetch popular videos — Also fetch the currently popular videos (热门). Used automatically when nothing else is given. Example: false."
+          },
+          "maxVideos": {
+            "type": "integer",
+            "default": 30,
+            "minimum": 1,
+            "maximum": 500,
+            "description": "Max videos — Maximum videos per keyword (and for popular)."
+          }
+        },
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "searchKeywords"
+            ]
+          },
+          {
+            "required": [
+              "keywords"
+            ]
+          },
+          {
+            "required": [
+              "videoUrls"
+            ]
+          },
+          {
+            "required": [
+              "popular"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "meetup_events_scraper",
+      "description": "Scrape upcoming Meetup.com events by keyword and city: date, in-person/online type, RSVPs, fee, venue address and coordinates, group and its rating. All pages, no login. Billed to your own Apify account: ~$0.001 per event (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "type": "string",
+            "description": "Keywords — What to search for, several keywords separated by `;` (e.g. `python; product management; hiking`). Leave empty to get all upcoming events in the location. Example: \"python\".",
+            "minLength": 1
+          },
+          "location": {
+            "type": "string",
+            "description": "Location — City or region, several separated by `;` (e.g. `New York; London; Berlin`). Leave empty to get online events. Example: \"New York\"."
+          },
+          "eventType": {
+            "type": "string",
+            "enum": [
+              "any",
+              "in-person",
+              "online"
+            ],
+            "default": "any",
+            "description": "Event type — Any, in-person only, or online only (online includes hybrid events). Options: any = Any; in-person = In person; online = Online."
+          },
+          "searchUrls": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Meetup search URLs — Optional: meetup.com/find/ URLs copied from your browser (keywords, location and event type are read from them).",
+            "minItems": 1
+          },
+          "maxEvents": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 2000,
+            "description": "Max events per search — Maximum events for each keyword × location."
+          }
+        },
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "keywords"
+            ]
+          },
+          {
+            "required": [
+              "searchUrls"
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
