@@ -4,7 +4,7 @@
   "display_name": "WebDataTools Search, video & social data",
   "version": "0.1.0",
   "description": "Search, video & social data tools for AI agents over MCP, backed by WebDataTools' Apify Actors. Uses your own Apify API token — billed to you, not us.",
-  "long_description": "23 search, video & social data tools. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.\n\nEvery tool call runs a WebDataTools Actor on your own Apify account (get a free token with monthly free credit at https://console.apify.com/settings/integrations), so usage is billed to you, never to the server author. The price per result is in each tool description.",
+  "long_description": "25 search, video & social data tools. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.\n\nEvery tool call runs a WebDataTools Actor on your own Apify account (get a free token with monthly free credit at https://console.apify.com/settings/integrations), so usage is billed to you, never to the server author. The price per result is in each tool description.",
   "author": {
     "name": "WebDataTools",
     "url": "https://apify.com/webdatatools"
@@ -1277,6 +1277,69 @@
       }
     },
     {
+      "name": "mastodon_scraper",
+      "description": "Scrape public Mastodon posts by hashtag, account or trending list on any instance: text, author, favourites, boosts, replies, hashtags, media, links. No login or API key. Billed to your own Apify account: ~$0.0005 per post (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "hashtags": {
+            "type": "string",
+            "description": "Hashtags — Hashtags to collect posts for, separated by `;` (e.g. `python; rust; photography`). A /tags/ URL such as `https://fosstodon.org/tags/rust` reads that instance. Example: \"python\".",
+            "minLength": 1
+          },
+          "accounts": {
+            "type": "string",
+            "description": "Accounts — Accounts whose posts to collect, separated by `;`: `user@instance` (e.g. `Gargron@mastodon.social; kev@fosstodon.org`) or profile URLs. A bare username is looked up on the Instance below.",
+            "minLength": 1
+          },
+          "trending": {
+            "type": "boolean",
+            "description": "Trending posts — Also collect the instance's trending posts. Used automatically when no hashtag or account is given. Example: false."
+          },
+          "instance": {
+            "type": "string",
+            "default": "mastodon.social",
+            "description": "Instance — Mastodon server to read hashtags and trending posts from. Big instances federate posts from the whole network."
+          },
+          "maxPosts": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 5000,
+            "description": "Max posts per source — Maximum posts for each hashtag, account and the trending list."
+          },
+          "excludeReplies": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip replies (accounts) — For accounts: leave out the account's replies to other posts."
+          },
+          "excludeBoosts": {
+            "type": "boolean",
+            "default": false,
+            "description": "Skip boosts (accounts) — For accounts: leave out posts the account boosted (reblogged)."
+          }
+        },
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "hashtags"
+            ]
+          },
+          {
+            "required": [
+              "accounts"
+            ]
+          },
+          {
+            "required": [
+              "trending"
+            ]
+          }
+        ]
+      }
+    },
+    {
       "name": "meetup_events_scraper",
       "description": "Scrape upcoming Meetup.com events by keyword and city: date, in-person/online type, RSVPs, fee, venue address and coordinates, group and its rating. All pages, no login. Billed to your own Apify account: ~$0.001 per event (Apify free-plan price, lower on paid plans).",
       "inputSchema": {
@@ -1327,6 +1390,45 @@
           {
             "required": [
               "searchUrls"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "eventbrite_scraper",
+      "description": "Scrape Eventbrite events by keyword and city or online: name, date and time, venue, address, coordinates, category, format, tags, organizer, summary and ticket link. All result pages, no login. Billed to your own Apify account: ~$0.001 per event (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "type": "string",
+            "description": "Keywords — What to search for, several separated by `;` (e.g. `python; startup networking; yoga`). Leave empty for all events in the location. Example: \"python\".",
+            "minLength": 1
+          },
+          "locations": {
+            "type": "string",
+            "description": "Locations — Cities, several separated by `;` (e.g. `New York; London; Berlin`), or `online` for online events. Every keyword is searched in every location. Example: \"New York; London\".",
+            "minLength": 1
+          },
+          "maxEvents": {
+            "type": "integer",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 980,
+            "description": "Max events per search — For each keyword × location (Eventbrite shows at most about 980)."
+          }
+        },
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "keywords"
+            ]
+          },
+          {
+            "required": [
+              "locations"
             ]
           }
         ]
