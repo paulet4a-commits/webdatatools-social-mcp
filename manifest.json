@@ -1445,7 +1445,8 @@
             "items": {
               "type": "string"
             },
-            "description": "Video URLs — TikTok video URLs, e.g. `https://www.tiktok.com/@nasa/video/7665075736742530317`. Short `vm.tiktok.com` links and bare video IDs work too. Example: [\"https://www.tiktok.com/@nasa/video/7665075736742530317\"]."
+            "description": "Video URLs — TikTok video URLs, e.g. `https://www.tiktok.com/@nasa/video/7665075736742530317`. Short `vm.tiktok.com` links and bare video IDs work too. Example: [\"https://www.tiktok.com/@nasa/video/7665075736742530317\"].",
+            "minItems": 1
           },
           "maxComments": {
             "type": "integer",
@@ -1467,7 +1468,10 @@
             "description": "Max replies per comment — Only when replies are included."
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "required": [
+          "videos"
+        ]
       }
     },
     {
@@ -1481,10 +1485,8 @@
             "items": {
               "type": "string"
             },
-            "default": [
-              "united-states"
-            ],
-            "description": "Locations — trends24.in location paths: a country (`united-states`, `turkey`, `united-kingdom`) or a city (`united-states/new-york`). Full trends24 URLs also work."
+            "description": "Locations — trends24.in location paths: a country (`united-states`, `turkey`, `united-kingdom`) or a city (`united-states/new-york`). Full trends24 URLs also work. Example: [\"united-states\"].",
+            "minItems": 1
           },
           "snapshots": {
             "type": "integer",
@@ -1501,7 +1503,10 @@
             "description": "Max trends per snapshot — Trends per snapshot, in rank order (trends24 lists up to 50)."
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "required": [
+          "locations"
+        ]
       }
     },
     {
@@ -1515,13 +1520,14 @@
             "items": {
               "type": "string"
             },
-            "default": [
-              "microsoft"
-            ],
-            "description": "Companies — LinkedIn company page URLs or slugs, e.g. `https://www.linkedin.com/company/microsoft` or `microsoft`. The public page shows about the 10 most recent posts."
+            "description": "Companies — LinkedIn company page URLs or slugs, e.g. `https://www.linkedin.com/company/microsoft` or `microsoft`. The public page shows about the 10 most recent posts. Example: [\"microsoft\"].",
+            "minItems": 1
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "required": [
+          "companies"
+        ]
       }
     },
     {
@@ -1535,18 +1541,16 @@
             "items": {
               "type": "string"
             },
-            "default": [],
-            "description": "Channels — Twitch channel names, e.g. `riotgames`, `@riotgames` or `https://www.twitch.tv/riotgames`. Returns the profile, followers and live status."
+            "description": "Channels — Twitch channel names, e.g. `riotgames`, `@riotgames` or `https://www.twitch.tv/riotgames`. Returns the profile, followers and live status. Example: [].",
+            "minItems": 1
           },
           "games": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "default": [
-              "Just Chatting"
-            ],
-            "description": "Categories (games) — Exact Twitch category names, e.g. `Just Chatting`, `Minecraft`. Returns the live streams in each category with viewers and titles."
+            "description": "Categories (games) — Exact Twitch category names, e.g. `Just Chatting`, `Minecraft`. Returns the live streams in each category with viewers and titles. Example: [\"Just Chatting\"].",
+            "minItems": 1
           },
           "maxStreamsPerCategory": {
             "type": "integer",
@@ -1557,13 +1561,29 @@
           },
           "topCategories": {
             "type": "integer",
-            "default": 0,
             "minimum": 0,
             "maximum": 1000,
-            "description": "Top categories (directory) — How many of the top Twitch categories to list (0 = none)."
+            "description": "Top categories (directory) — How many of the top Twitch categories to list (0 = none). Example: 0."
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "channels"
+            ]
+          },
+          {
+            "required": [
+              "games"
+            ]
+          },
+          {
+            "required": [
+              "topCategories"
+            ]
+          }
+        ]
       }
     },
     {
@@ -1577,7 +1597,8 @@
             "items": {
               "type": "string"
             },
-            "description": "Search queries — Keywords to search in Google Images, one per line. Example: [\"red running shoes\"]."
+            "description": "Search queries — Keywords to search in Google Images, one per line. Example: [\"red running shoes\"].",
+            "minItems": 1
           },
           "maxResultsPerQuery": {
             "type": "integer",
@@ -1597,7 +1618,10 @@
             "description": "Language (hl) — Two-letter language code."
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "required": [
+          "queries"
+        ]
       }
     },
     {
@@ -1611,10 +1635,14 @@
             "items": {
               "type": "string"
             },
-            "description": "Video URLs — TikTok video URLs, e.g. `https://www.tiktok.com/@nasa/video/7665075736742530317`. Example: [\"https://www.tiktok.com/@nasa/video/7665075736742530317\"]."
+            "description": "Video URLs — TikTok video URLs, e.g. `https://www.tiktok.com/@nasa/video/7665075736742530317`. Example: [\"https://www.tiktok.com/@nasa/video/7665075736742530317\"].",
+            "minItems": 1
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "required": [
+          "videos"
+        ]
       }
     },
     {
@@ -1628,18 +1656,16 @@
             "items": {
               "type": "string"
             },
-            "default": [
-              "webscraping"
-            ],
-            "description": "Subreddits — Subreddit names, e.g. `webscraping` or `r/webscraping`. Full subreddit URLs also work."
+            "description": "Subreddits — Subreddit names, e.g. `webscraping` or `r/webscraping`. Full subreddit URLs also work. Example: [\"webscraping\"].",
+            "minItems": 1
           },
           "searchQueries": {
             "type": "array",
             "items": {
               "type": "string"
             },
-            "default": [],
-            "description": "Search queries — Reddit-wide search terms, e.g. `web scraping proxy`. Search returns up to 25 posts per query."
+            "description": "Search queries — Reddit-wide search terms, e.g. `web scraping proxy`. Search returns up to 25 posts per query. Example: [].",
+            "minItems": 1
           },
           "sort": {
             "type": "string",
@@ -1685,7 +1711,19 @@
             "description": "Max posts per subreddit — Posts to collect for each subreddit (Reddit returns about 24 per page)."
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": [
+              "subreddits"
+            ]
+          },
+          {
+            "required": [
+              "searchQueries"
+            ]
+          }
+        ]
       }
     }
   ]
