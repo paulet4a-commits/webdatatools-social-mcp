@@ -196,7 +196,7 @@
     "name": "google_search_scraper",
     "actor": "webdatatools~google-search-scraper",
     "title": "Google Search Results Scraper — SERP API",
-    "description": "Google Search Results Scraper returns organic results (title, real URL, snippet, position) for any query through the Apify GOOGLE_SERP proxy — one row per SERP page, and each row is one billed result. Billed to your own Apify account: ~$0.005 per result (Apify free-plan price, lower on paid plans).",
+    "description": "Google Search Results Scraper returns organic titles, real destination URLs and snippets through the Apify GOOGLE_SERP proxy. One row per accepted SERP page; failures go to diagnostics. Verified zero-result pages remain billable pages. Billed to your own Apify account: ~$0.005 per result (Apify free-plan price, lower on paid plans).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -205,7 +205,7 @@
           "items": {
             "type": "string"
           },
-          "description": "Search queries — Enter the Google search queries to scrape, e.g. apify web scraping. One dataset row is returned per query per result page (each row is one billed SERP page). Rows are saved as they finish; if the run timeout is near, the Actor stops early and still ends SUCCEEDED with the pages done so far. Example: [\"apify web scraping\"].",
+          "description": "Search queries — Enter the Google search queries to scrape, e.g. apify web scraping. One dataset row is returned per accepted query/page. Verified zero-result pages remain billable; fetch, block, parsing and missing-destination failures are stored separately in diagnostics. Rows are saved as they finish; if the run timeout is near, the Actor stops early and still ends SUCCEEDED with the pages done so far. Example: [\"apify web scraping\"].",
           "minItems": 1
         },
         "countryCode": {
@@ -389,7 +389,7 @@
     "name": "youtube_channel_scraper",
     "actor": "webdatatools~youtube-channel-scraper",
     "title": "YouTube Channel Scraper (videos, shorts, live)",
-    "description": "YouTube Channel Scraper extracts videos, Shorts or livestreams from any YouTube channel — title, views, duration, publish time and thumbnail — no API key or quota needed. Billed to your own Apify account: ~$0.0005 per video (Apify free-plan price, lower on paid plans).",
+    "description": "Export a public YouTube channel's videos, Shorts or livestreams: titles, views, duration, publish time and thumbnails. Use handles, channel IDs or URLs; limit results for a small first run, then schedule repeat exports. No YouTube Data API key required. Billed to your own Apify account: ~$0.0005 per video (Apify free-plan price, lower on paid plans).",
     "inputSchema": {
       "type": "object",
       "properties": {
@@ -409,7 +409,7 @@
             "streams"
           ],
           "default": "videos",
-          "description": "Tab — Choose which channel tab to read: 'videos' for regular uploads, 'shorts' for Shorts, or 'streams' for the Live tab (past and current livestreams). A channel without that tab returns an error row for it. Options: videos = Videos; shorts = Shorts; streams = Live."
+          "description": "Tab — Choose which channel tab to read: 'videos' for regular uploads, 'shorts' for Shorts, or 'streams' for the Live tab (past and current livestreams). A missing or empty tab creates a diagnostic record, not a video row. Source and parsing failures are reported separately. Options: videos = Videos; shorts = Shorts; streams = Live."
         },
         "sortBy": {
           "type": "string",
@@ -1546,5 +1546,310 @@
     "arrayFields": [],
     "urlSourceFields": [],
     "price": "$0.001 / event"
+  },
+  {
+    "name": "tiktok_comments_scraper",
+    "actor": "webdatatools~tiktok-comments-scraper",
+    "title": "TikTok Comments Scraper (Video Comments & Replies)",
+    "description": "Scrape public comments of TikTok videos: text, author, likes, reply count and date, with optional replies. No login. Give video URLs; get one row per comment. Billed to your own Apify account: ~$0.001 per comment (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "videos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Video URLs — TikTok video URLs, e.g. `https://www.tiktok.com/@nasa/video/7665075736742530317`. Short `vm.tiktok.com` links and bare video IDs work too. Example: [\"https://www.tiktok.com/@nasa/video/7665075736742530317\"]."
+        },
+        "maxComments": {
+          "type": "integer",
+          "default": 100,
+          "minimum": 1,
+          "maximum": 5000,
+          "description": "Max comments per video — Top-level comments per video (TikTok order, 20 per page)."
+        },
+        "includeReplies": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include replies — Also return replies to each comment (they are marked `isReply`)."
+        },
+        "maxRepliesPerComment": {
+          "type": "integer",
+          "default": 10,
+          "minimum": 1,
+          "maximum": 200,
+          "description": "Max replies per comment — Only when replies are included."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "videos"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.001 / comment"
+  },
+  {
+    "name": "twitter_trends_scraper",
+    "actor": "webdatatools~twitter-trends-scraper",
+    "title": "X (Twitter) Trends Scraper (Trends by Country & City)",
+    "description": "Scrape X (Twitter) trending topics by country or city from trends24.in: rank, trend name, search link and the hourly snapshot time for the last 24 hours. Billed to your own Apify account: ~$0.0003 per trend (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "locations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "united-states"
+          ],
+          "description": "Locations — trends24.in location paths: a country (`united-states`, `turkey`, `united-kingdom`) or a city (`united-states/new-york`). Full trends24 URLs also work."
+        },
+        "snapshots": {
+          "type": "integer",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 24,
+          "description": "Snapshots (hours) — How many hourly snapshots of the last 24 hours to collect, newest first. 1 = the latest trends only."
+        },
+        "maxTrendsPerSnapshot": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Max trends per snapshot — Trends per snapshot, in rank order (trends24 lists up to 50)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "locations"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0003 / trend"
+  },
+  {
+    "name": "linkedin_company_posts_scraper",
+    "actor": "webdatatools~linkedin-company-posts-scraper",
+    "title": "LinkedIn Company Posts Scraper (Public Company Feed)",
+    "description": "Scrape the recent posts on public LinkedIn company pages without login: post text, posted time, reactions, comments, media, external links and post URL. Company feed only, no people profiles or commenters. Billed to your own Apify account: ~$0.002 per post (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "companies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "microsoft"
+          ],
+          "description": "Companies — LinkedIn company page URLs or slugs, e.g. `https://www.linkedin.com/company/microsoft` or `microsoft`. The public page shows about the 10 most recent posts."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "companies"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.002 / post"
+  },
+  {
+    "name": "twitch_scraper",
+    "actor": "webdatatools~twitch-scraper",
+    "title": "Twitch Scraper (Live Streams, Viewers, Followers)",
+    "description": "Scrape Twitch channel profiles with follower counts and live status, live streams by category with viewer counts and titles, and the top categories directory. Billed to your own Apify account: ~$0.002 per row (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Channels — Twitch channel names, e.g. `riotgames`, `@riotgames` or `https://www.twitch.tv/riotgames`. Returns the profile, followers and live status."
+        },
+        "games": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "Just Chatting"
+          ],
+          "description": "Categories (games) — Exact Twitch category names, e.g. `Just Chatting`, `Minecraft`. Returns the live streams in each category with viewers and titles."
+        },
+        "maxStreamsPerCategory": {
+          "type": "integer",
+          "default": 30,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Max live streams per category — Live streams to collect for each category, most viewed first (Twitch order)."
+        },
+        "topCategories": {
+          "type": "integer",
+          "default": 0,
+          "minimum": 0,
+          "maximum": 1000,
+          "description": "Top categories (directory) — How many of the top Twitch categories to list (0 = none)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "channels",
+      "games"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.002 / row"
+  },
+  {
+    "name": "google_images_scraper",
+    "actor": "webdatatools~google-images-scraper",
+    "title": "Google Images Scraper (Image Search Results)",
+    "description": "Google Images Scraper returns image search results for keywords: title, image URL, source page and domain. Uses the Apify GOOGLE_SERP proxy, no browser. Billed to your own Apify account: ~$0.002 per image (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "queries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Search queries — Keywords to search in Google Images, one per line. Example: [\"red running shoes\"]."
+        },
+        "maxResultsPerQuery": {
+          "type": "integer",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 100,
+          "description": "Max images per query — One SERP request gives about 100 image results; this caps the rows per query."
+        },
+        "countryCode": {
+          "type": "string",
+          "default": "us",
+          "description": "Country (gl) — Two-letter country code."
+        },
+        "languageCode": {
+          "type": "string",
+          "default": "en",
+          "description": "Language (hl) — Two-letter language code."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "queries"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.002 / image"
+  },
+  {
+    "name": "tiktok_video_scraper",
+    "actor": "webdatatools~tiktok-video-scraper",
+    "title": "TikTok Video Scraper (Views, Likes, Caption, Music)",
+    "description": "Get public TikTok video details in bulk: views, likes, comments, shares and saves, caption, hashtags, music, duration, cover image, author and posting country. No login. Video files are not downloaded. Billed to your own Apify account: ~$0.002 per video (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "videos": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Video URLs — TikTok video URLs, e.g. `https://www.tiktok.com/@nasa/video/7665075736742530317`. Example: [\"https://www.tiktok.com/@nasa/video/7665075736742530317\"]."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "videos"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.002 / video"
+  },
+  {
+    "name": "reddit_scraper",
+    "actor": "webdatatools~reddit-scraper",
+    "title": "Reddit Subreddit & Search Scraper (Posts, Scores)",
+    "description": "Scrape Reddit posts from any subreddit listing (hot, new, top, rising, controversial) or Reddit-wide search: title, author, score, comment count, flair, time, domain and link. Comment bodies are not included. Billed to your own Apify account: ~$0.0014 per post (Apify free-plan price, lower on paid plans).",
+    "inputSchema": {
+      "type": "object",
+      "properties": {
+        "subreddits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "webscraping"
+          ],
+          "description": "Subreddits — Subreddit names, e.g. `webscraping` or `r/webscraping`. Full subreddit URLs also work."
+        },
+        "searchQueries": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Search queries — Reddit-wide search terms, e.g. `web scraping proxy`. Search returns up to 25 posts per query."
+        },
+        "sort": {
+          "type": "string",
+          "enum": [
+            "hot",
+            "new",
+            "top",
+            "rising",
+            "controversial"
+          ],
+          "default": "hot",
+          "description": "Subreddit sort — Listing order for subreddits. Options: hot = Hot; new = New; top = Top; rising = Rising; controversial = Controversial."
+        },
+        "timeframe": {
+          "type": "string",
+          "enum": [
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year",
+            "all"
+          ],
+          "default": "week",
+          "description": "Timeframe (Top / Controversial) — Used for subreddit Top and Controversial, and for search when Search sort is Top. Options: hour = Past hour; day = Past 24 hours; week = Past week; month = Past month; year = Past year; all = All time."
+        },
+        "searchSort": {
+          "type": "string",
+          "enum": [
+            "relevance",
+            "new",
+            "top",
+            "comments"
+          ],
+          "default": "new",
+          "description": "Search sort — Order for search queries. Options: relevance = Relevance; new = New; top = Top; comments = Most comments."
+        },
+        "maxPostsPerSubreddit": {
+          "type": "integer",
+          "default": 50,
+          "minimum": 1,
+          "maximum": 1000,
+          "description": "Max posts per subreddit — Posts to collect for each subreddit (Reddit returns about 24 per page)."
+        }
+      },
+      "additionalProperties": false
+    },
+    "arrayFields": [
+      "subreddits",
+      "searchQueries"
+    ],
+    "urlSourceFields": [],
+    "price": "$0.0014 / post"
   }
 ]

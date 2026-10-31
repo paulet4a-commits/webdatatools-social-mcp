@@ -1,7 +1,7 @@
 # WebDataTools Search, video & social data MCP server
 `webdatatools-social-mcp`
 
-An MCP server with 25 search, video & social data tools for AI agents — Claude Desktop, Cursor, Cline or any MCP client. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.
+An MCP server with 32 search, video & social data tools for AI agents — Claude Desktop, Cursor, Cline or any MCP client. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.
 
 **This server uses *your own* Apify API token.** Every tool call runs a [WebDataTools](https://apify.com/webdatatools) Actor under your Apify account and is billed to your Apify credit — pay per result, the price is in each tool description. Your token is only sent to Apify's API.
 
@@ -36,7 +36,7 @@ Add this to `claude_desktop_config.json` (Claude Desktop) or `.cursor/mcp.json` 
 }
 ```
 
-## Tools (25)
+## Tools (32)
 
 | Tool | What it does | Price (free plan) | Backing Actor |
 |---|---|---|---|
@@ -65,6 +65,13 @@ Add this to `claude_desktop_config.json` (Claude Desktop) or `.cursor/mcp.json` 
 | `mastodon_scraper` | Mastodon Scraper (Hashtags, Accounts, Trending) | $0.0005 / post | [Actor](https://apify.com/webdatatools/mastodon-scraper) |
 | `meetup_events_scraper` | Meetup Events Scraper (Search by Keyword & City) | $0.001 / event | [Actor](https://apify.com/webdatatools/meetup-events-scraper) |
 | `eventbrite_scraper` | Eventbrite Scraper (Events by Keyword & City) | $0.001 / event | [Actor](https://apify.com/webdatatools/eventbrite-scraper) |
+| `tiktok_comments_scraper` | TikTok Comments Scraper (Video Comments & Replies) | $0.001 / comment | [Actor](https://apify.com/webdatatools/tiktok-comments-scraper) |
+| `twitter_trends_scraper` | X (Twitter) Trends Scraper (Trends by Country & City) | $0.0003 / trend | [Actor](https://apify.com/webdatatools/twitter-trends-scraper) |
+| `linkedin_company_posts_scraper` | LinkedIn Company Posts Scraper (Public Company Feed) | $0.002 / post | [Actor](https://apify.com/webdatatools/linkedin-company-posts-scraper) |
+| `twitch_scraper` | Twitch Scraper (Live Streams, Viewers, Followers) | $0.002 / row | [Actor](https://apify.com/webdatatools/twitch-scraper) |
+| `google_images_scraper` | Google Images Scraper (Image Search Results) | $0.002 / image | [Actor](https://apify.com/webdatatools/google-images-scraper) |
+| `tiktok_video_scraper` | TikTok Video Scraper (Views, Likes, Caption, Music) | $0.002 / video | [Actor](https://apify.com/webdatatools/tiktok-video-scraper) |
+| `reddit_scraper` | Reddit Subreddit & Search Scraper (Posts, Scores) | $0.0014 / post | [Actor](https://apify.com/webdatatools/reddit-scraper) |
 
 ## More WebDataTools MCP servers
 
