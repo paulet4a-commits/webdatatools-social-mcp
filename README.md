@@ -1,7 +1,7 @@
 # WebDataTools Search, video & social data MCP server
 `webdatatools-social-mcp`
 
-An MCP server with 32 search, video & social data tools for AI agents — Claude Desktop, Cursor, Cline or any MCP client. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.
+An MCP server with 34 search, video & social data tools for AI agents — Claude Desktop, Cursor, Cline or any MCP client. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.
 
 **This server uses *your own* Apify API token.** Every tool call runs a [WebDataTools](https://apify.com/webdatatools) Actor under your Apify account and is billed to your Apify credit — pay per result, the price is in each tool description. Your token is only sent to Apify's API.
 
@@ -36,7 +36,7 @@ Add this to `claude_desktop_config.json` (Claude Desktop) or `.cursor/mcp.json` 
 }
 ```
 
-## Tools (32)
+## Tools (34)
 
 | Tool | What it does | Price (free plan) | Backing Actor |
 |---|---|---|---|
@@ -72,6 +72,8 @@ Add this to `claude_desktop_config.json` (Claude Desktop) or `.cursor/mcp.json` 
 | `google_images_scraper` | Google Images Scraper (Image Search Results) | $0.002 / image | [Actor](https://apify.com/webdatatools/google-images-scraper) |
 | `tiktok_video_scraper` | TikTok Video Scraper (Views, Likes, Caption, Music) | $0.002 / video | [Actor](https://apify.com/webdatatools/tiktok-video-scraper) |
 | `reddit_scraper` | Reddit Subreddit & Search Scraper (Posts, Scores) | $0.0014 / post | [Actor](https://apify.com/webdatatools/reddit-scraper) |
+| `youtube_playlist_scraper` | YouTube Playlist Scraper (Videos, Views, Durations) | $0.001 / video | [Actor](https://apify.com/webdatatools/youtube-playlist-scraper) |
+| `spotify_playlist_scraper` | Spotify Playlist Scraper (Tracks, Artists, Previews) | $0.001 / track | [Actor](https://apify.com/webdatatools/spotify-playlist-scraper) |
 
 ## More WebDataTools MCP servers
 

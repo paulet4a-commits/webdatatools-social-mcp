@@ -4,7 +4,7 @@
   "display_name": "WebDataTools Search, video & social data",
   "version": "0.1.0",
   "description": "Search, video & social data tools for AI agents over MCP, backed by WebDataTools' Apify Actors. Uses your own Apify API token — billed to you, not us.",
-  "long_description": "32 search, video & social data tools. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.\n\nEvery tool call runs a WebDataTools Actor on your own Apify account (get a free token with monthly free credit at https://console.apify.com/settings/integrations), so usage is billed to you, never to the server author. The price per result is in each tool description.",
+  "long_description": "34 search, video & social data tools. Google search results, YouTube channels, videos, search and comments, podcasts, Bluesky, Telegram channels and Substack publications — no API keys needed.\n\nEvery tool call runs a WebDataTools Actor on your own Apify account (get a free token with monthly free credit at https://console.apify.com/settings/integrations), so usage is billed to you, never to the server author. The price per result is in each tool description.",
   "author": {
     "name": "WebDataTools",
     "url": "https://apify.com/webdatatools"
@@ -1723,6 +1723,62 @@
               "searchQueries"
             ]
           }
+        ]
+      }
+    },
+    {
+      "name": "youtube_playlist_scraper",
+      "description": "Scrape every video of a public YouTube playlist in playlist order: title, channel, views, age, duration, thumbnail and link, one row per video. Billed to your own Apify account: ~$0.001 per video (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "playlists": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Playlist links or ids — Playlist URLs or ids, one per line, e.g. https://www.youtube.com/playlist?list=PL06diOotXAJLAAHBY7kIUm5GQwm2ZinOz or PL06diOotXAJLAAHBY7kIUm5GQwm2ZinOz. Example: [\"https://www.youtube.com/playlist?list=PL06diOotXAJLAAHBY7kIUm5GQwm2ZinOz\"].",
+            "minItems": 1
+          },
+          "maxVideos": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 2000,
+            "description": "Max videos per playlist — How many videos to return from each playlist, e.g. 200. The page loads 100 at a time."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "playlists"
+        ]
+      }
+    },
+    {
+      "name": "spotify_playlist_scraper",
+      "description": "Scrape Spotify playlists, albums and artist top tracks: track name, artists, duration, Spotify URI, preview link and cover, from the public Spotify embed pages. Billed to your own Apify account: ~$0.001 per track (Apify free-plan price, lower on paid plans).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "links": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Spotify links — Playlist, album or artist links, one per line, e.g. https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M or spotify:album:1DFixLWuPkv3KT3TnV35m3. Spotify embed pages list up to 50 tracks per playlist or album and 10 per artist. Example: [\"https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M\"].",
+            "minItems": 1
+          },
+          "maxResults": {
+            "type": "integer",
+            "default": 100,
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Max tracks — Maximum track rows in total, e.g. 100. Each source adds at most 50 (playlists and albums) or 10 (artists) rows."
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "links"
         ]
       }
     }
